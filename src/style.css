@@ -13,7 +13,6 @@ main {
 }
 
 .window-body {
-  background: var(--button-bg);
   padding: 0.667em;
 }
 
@@ -47,8 +46,6 @@ main {
 
 /* The theme sizes the slider in px; resize in em so the labels line up at every zoom */
 #prefix {
-  font: inherit;
-  display: block;
   height: 1.417em;
 }
 
@@ -98,7 +95,6 @@ main {
 }
 
 .box {
-  border: 1px dotted transparent;
   padding: 0.25em;
 }
 
@@ -108,7 +104,6 @@ main {
   margin-top: 0.667em;
   border-collapse: collapse;
   background: var(--input-bg);
-  color: var(--input-fg);
 }
 
 td {
@@ -137,7 +132,6 @@ td:first-child {
 }
 
 button {
-  font: inherit;
   padding: 0.167em 0.5em;
 }
 
