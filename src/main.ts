@@ -84,3 +84,12 @@ prefixSelect.addEventListener('change', () => setActive(false))
 maskInput.addEventListener('focus', () => setActive(true))
 maskInput.addEventListener('input', () => setActive(true))
 update()
+
+let fontSize = 12
+function zoom(size: number): void {
+  fontSize = Math.min(32, Math.max(8, size))
+  document.body.style.fontSize = `${fontSize}px`
+}
+$('smaller').addEventListener('click', () => zoom(fontSize - 2))
+$('bigger').addEventListener('click', () => zoom(fontSize + 2))
+$('reset').addEventListener('click', () => zoom(12))

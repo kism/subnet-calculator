@@ -2,47 +2,48 @@ body {
   background: #d4d0c8;
   color: #000;
   font:
-    12px "Fira Code",
+    12px "DejaVu Mono",
+    "DejaVu Sans Mono",
     monospace;
-  margin: 20px;
+  margin: 1.667em;
 }
 
 main {
-  width: 380px;
+  width: 31.667em;
   margin: 0 auto;
 }
 
 fieldset {
   background: linear-gradient(#fdfdfd, #e6e6e6);
   border: 1px solid #888;
-  padding: 8px;
+  padding: 0.667em;
 }
 
 legend {
   font-weight: bold;
-  padding: 0 4px;
+  padding: 0 0.333em;
 }
 
 input,
 select {
   font: inherit;
   border: 1px solid #7f9db9;
-  padding: 1px 2px;
+  padding: 1px 0.167em;
 }
 
 #ip {
-  width: 220px;
+  width: 18.333em;
 }
 
 #masks {
-  margin-top: 8px;
+  margin-top: 0.667em;
   display: flex;
-  gap: 4px;
+  gap: 0.333em;
 }
 
 .box {
   border: 1px dotted transparent;
-  padding: 3px;
+  padding: 0.25em;
 }
 
 .box.active {
@@ -52,14 +53,14 @@ select {
 
 table {
   width: 100%;
-  margin-top: 8px;
+  margin-top: 0.667em;
   border-collapse: collapse;
   background: #fff;
 }
 
 td {
   border: 1px solid #c0c0c0;
-  padding: 2px 6px;
+  padding: 0.167em 0.5em;
 }
 
 tr:nth-child(even) {
@@ -67,7 +68,7 @@ tr:nth-child(even) {
 }
 
 td:first-child {
-  width: 90px;
+  width: 7.5em;
   font-weight: bold;
 }
 
@@ -81,6 +82,23 @@ select:disabled {
   color: #888;
   border-color: transparent;
   background: none;
+}
+
+#zoom {
+  position: fixed;
+  right: 8px;
+  bottom: 8px;
+  font-size: 12px;
+}
+
+button {
+  font: inherit;
+}
+
+@media (max-width: 600px) {
+  #zoom {
+    display: none;
+  }
 }
 
 .error {
