@@ -1,5 +1,5 @@
 ---
-name: CI
+name: Test
 
 on:
   push:
@@ -8,9 +8,12 @@ on:
   pull_request:
 
 jobs:
-  build:
-    name: Lint, test & build
+  test:
+    name: Test
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # Codecov OIDC upload, no token secret needed
 
     steps:
       - name: Checkout code
@@ -25,11 +28,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Lint
-        run: npm run lint
-
       - name: Test
-        run: npm test
+        run: npm run coverage
 
-      - name: Build
-        run: npm run build
+      - name: Upload coverage
+        uses: codecov/codecov-action@v7
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { calculate, formatIp, maskToPrefix, parseIp, parsePrefix, prefixToMask } from './subnet'
+import { calculate, formatIp, maskToPrefix, parseIp, parsePrefix, prefixToMask } from '../src/subnet'
 
 describe('parseIp', () => {
   it('parses valid addresses', () => {

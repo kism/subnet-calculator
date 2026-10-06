@@ -9,12 +9,12 @@ A static single-page IPv4 subnet calculator with no UI framework, just plain HTM
 Use the Node version in `.nvmrc` (26) and npm.
 
 - `npm run dev`: Vite dev server.
-- `npm test`: runs vitest once.
-  - Single file: `npx vitest run src/subnet.test.ts`.
+- `npm test`: runs vitest once. `npm run coverage` does the same with coverage, writing `coverage/lcov.info`.
+  - Single file: `npx vitest run tests/subnet.test.ts`.
   - Single test by name: `npx vitest run -t "handles /31"`.
 - `npm run build`: runs `scripts/build.sh`, which type-checks with tsc (`noEmit`) and then runs `vite build` into `dist/`.
 - `npm run lint`: `biome check`, which covers both linting and formatting. `npm run format` applies the fixes.
-- CI runs lint, then test, then build.
+- CI is two workflows: `lint.yml` (lint, then build) and `test.yml` (tests with coverage, uploaded to Codecov via OIDC).
 
 ## Layout
 
@@ -22,7 +22,9 @@ Use the Node version in `.nvmrc` (26) and npm.
   - IPs are unsigned 32-bit numbers. Normalise with `>>> 0` after any bitwise operation.
   - `/31` and `/32` are treated as having no network or broadcast address reserved (RFC 3021).
   - Masks with gaps are rejected.
-- `src/subnet.test.ts` holds the only tests. Keep the logic in `subnet.ts` so it stays testable.
+- Tests live in `tests/`. Keep the logic in `subnet.ts` so it stays testable.
+  - `subnet.test.ts` holds the hand-written cases.
+  - `reference.test.ts` checks `calculate()` against `tests/cases.json`. `npm test` runs `scripts/gen_cases.py` first (as `pretest`) to generate that file from Python's `ipaddress`. The file is gitignored.
 - `src/main.ts` holds the DOM wiring.
   - A `/suffix` on the IP (either `/24` or `/255.255.255.0`) wins. When there's a suffix, both mask boxes are disabled and show the parsed prefix.
   - Without a suffix, whichever mask box was last used (`maskActive`) decides the prefix. `syncMasks()` copies a valid value into the other box.
