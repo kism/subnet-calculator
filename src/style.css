@@ -1,6 +1,5 @@
+/* Colours and widget looks come from the CDE theme (crimson-4 skin) imported in main.ts */
 body {
-  background: #d4d0c8;
-  color: #000;
   font:
     12px "DejaVu Mono",
     "DejaVu Sans Mono",
@@ -13,33 +12,14 @@ main {
   margin: 0 auto;
 }
 
-fieldset {
-  background: linear-gradient(#fdfdfd, #e6e6e6);
-  border: 1px solid #888;
+.window-body {
+  background: var(--button-bg);
   padding: 0.667em;
 }
 
-legend {
-  font-weight: bold;
-  padding: 0 0.333em;
-}
-
 ::selection {
-  background: #008080;
-  color: #fff;
-}
-
-/* Windows 98 style sunken field */
-#ip,
-#mask {
-  font: inherit;
-  border: 1px solid;
-  border-color: #808080 #fff #fff #808080;
-  box-shadow:
-    inset 1px 1px #404040,
-    inset -1px -1px #d4d0c8;
-  padding: 0.167em 0.25em;
-  outline: none;
+  background: var(--title-bar-active-bg);
+  color: var(--title-bar-active-fg);
 }
 
 #ip {
@@ -48,6 +28,7 @@ legend {
 
 #addr {
   display: flex;
+  padding: 0.25em;
   flex-wrap: wrap;
   align-items: center;
   gap: 0.333em;
@@ -64,62 +45,40 @@ legend {
   height: 3em;
 }
 
+/* The theme sizes the slider in px; resize in em so the labels line up at every zoom */
 #prefix {
   font: inherit;
-  -webkit-appearance: none;
-  appearance: none;
-  width: 100%;
-  height: 1.333em;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  background: transparent;
+  display: block;
+  height: 1.417em;
 }
 
-/* Thumb and track sized in em so the labels below line up at every zoom */
 #prefix::-webkit-slider-runnable-track {
-  height: 0.333em;
-  background: #fff;
-  box-shadow: inset 0 0 0 1px #888;
+  box-sizing: border-box;
+  height: 1.25em;
 }
 
 #prefix::-moz-range-track {
-  height: 0.333em;
-  background: #fff;
-  box-shadow: inset 0 0 0 1px #888;
+  box-sizing: border-box;
+  height: 1.25em;
 }
 
 #prefix::-webkit-slider-thumb {
-  -webkit-appearance: none;
   box-sizing: border-box;
-  width: 1em;
-  height: 1.333em;
-  margin-top: -0.5em;
-  background: #d4d0c8;
-  border: 1px solid;
-  border-color: #fff #404040 #404040 #fff;
-  border-radius: 0;
+  width: 2.333em;
+  height: calc(1.25em - 2px);
+  background-size: 2px 100%;
+  transition: transform 0.1s;
 }
 
 #prefix::-moz-range-thumb {
   box-sizing: border-box;
-  width: 1em;
-  height: 1.333em;
-  background: #d4d0c8;
-  border: 1px solid;
-  border-color: #fff #404040 #404040 #fff;
-  border-radius: 0;
+  width: 2.333em;
+  height: calc(1.25em - 2px);
+  background-size: 2px 100%;
+  transition: transform 0.1s;
 }
 
 /* Grow the handle on hover/drag; scale, not width, so the labels stay aligned */
-#prefix::-webkit-slider-thumb {
-  transition: transform 0.1s;
-}
-
-#prefix::-moz-range-thumb {
-  transition: transform 0.1s;
-}
-
 #prefix:enabled:hover::-webkit-slider-thumb,
 #prefix:enabled:active::-webkit-slider-thumb {
   transform: scale(1.25);
@@ -130,30 +89,15 @@ legend {
   transform: scale(1.25);
 }
 
-#prefix:disabled::-webkit-slider-runnable-track {
-  background: #ebebe4;
-  box-shadow: inset 0 0 0 1px #c0c0c0;
+#prefix:disabled {
+  opacity: 0.5;
 }
 
-#prefix:disabled::-moz-range-track {
-  background: #ebebe4;
-  box-shadow: inset 0 0 0 1px #c0c0c0;
-}
-
-#prefix:disabled::-webkit-slider-thumb {
-  background: #ebebe4;
-  border-color: #c0c0c0;
-}
-
-#prefix:disabled::-moz-range-thumb {
-  background: #ebebe4;
-  border-color: #c0c0c0;
-}
-
+/* ponytail: matches Chrome, where the thumb travels inside the track's 1px border; Firefox is off by up to 1px */
 #slider span {
   position: absolute;
-  top: 1.333em;
-  left: calc(var(--p) / 32 * (100% - 1em) + 0.5em);
+  top: 1.417em;
+  left: calc(1px + var(--p) / 32 * (100% - 2px - 2.333em) + 1.167em);
   transform: translateX(-50%);
 }
 
@@ -163,7 +107,7 @@ legend {
   width: 1px;
   height: 0.333em;
   margin: 0 auto;
-  background: #888;
+  background: var(--button-dark);
 }
 
 .box {
@@ -171,20 +115,22 @@ legend {
   padding: 0.25em;
 }
 
-table {
+/* id beats the theme's .window-body > * panel background */
+#info {
   width: 100%;
   margin-top: 0.667em;
   border-collapse: collapse;
-  background: #fff;
+  background: var(--input-bg);
+  color: var(--input-fg);
 }
 
 td {
-  border: 1px solid #c0c0c0;
+  border: 1px solid var(--input-dark);
   padding: 0.167em 0.5em;
 }
 
 tr:nth-child(even) {
-  background: #f0f0f0;
+  background: rgba(0, 0, 0, 0.05);
 }
 
 td:first-child {
@@ -192,14 +138,8 @@ td:first-child {
   font-weight: bold;
 }
 
-input:disabled,
-select:disabled {
-  background: #ebebe4;
-  color: #888;
-}
-
 .box:has(:disabled) {
-  color: #888;
+  color: var(--button-dark);
 }
 
 #zoom {
@@ -211,30 +151,7 @@ select:disabled {
 
 button {
   font: inherit;
-  background: #d4d0c8;
-  border: 1px solid;
-  border-color: #fff #404040 #404040 #fff;
-  box-shadow:
-    inset -1px -1px #808080,
-    inset 1px 1px #dfdfdf;
   padding: 0.167em 0.5em;
-}
-
-button:active {
-  border-color: #404040 #fff #fff #404040;
-  box-shadow:
-    inset 1px 1px #808080,
-    inset -1px -1px #dfdfdf;
-}
-
-button:focus,
-#prefix:focus {
-  outline: 1px dotted #000;
-  outline-offset: -4px;
-}
-
-#prefix:focus {
-  outline-offset: 1px;
 }
 
 @media (max-width: 600px) {

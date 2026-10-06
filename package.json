@@ -26,6 +26,7 @@
     "fsevents@2.3.3": true
   },
   "dependencies": {
-    "@fontsource/dejavu-mono": "^5.3.0"
+    "@fontsource/dejavu-mono": "^5.3.0",
+    "classic-stylesheets": "^2.1.3"
   }
 }

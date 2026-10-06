@@ -1,5 +1,8 @@
 import '@fontsource/dejavu-mono/400.css'
 import '@fontsource/dejavu-mono/700.css'
+import 'classic-stylesheets/layout.css'
+import 'classic-stylesheets/themes/cde/theme.css'
+import 'classic-stylesheets/themes/cde/skins/crimson-4.css'
 import './style.css'
 import { calculate, formatIp, maskToPrefix, parseIp, parsePrefix, prefixToMask } from './subnet'
 
