@@ -55,15 +55,15 @@ function rows(): [string, string][] {
         : Number(prefixSlider.value)
   if (prefix !== null) syncMasks(prefix)
 
-  if (value === '') return []
+  if (value === '') return [['Error', 'Enter IP address']]
   const ip = parseIp(slash === -1 ? value : value.slice(0, slash))
   if (ip === null) return [['Error', 'Invalid IP address']]
   if (prefix === null) return [['Error', 'Invalid netmask']]
 
   const info = calculate(ip, prefix)
   return [
-    ['Address', info.address],
-    ['Netmask', `${info.netmask} = /${info.prefix}`],
+    ['Address', `${info.address}/${info.prefix}`],
+    ['Netmask', info.netmask],
     ['Wildcard', info.wildcard],
     ['Network', `${info.network}/${info.prefix}`],
     ['Broadcast', info.broadcast],
