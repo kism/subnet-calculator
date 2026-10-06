@@ -82,3 +82,7 @@ select:disabled {
   border-color: transparent;
   background: none;
 }
+
+.error {
+  color: #c00;
+}

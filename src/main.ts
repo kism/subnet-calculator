@@ -25,9 +25,11 @@ function setActive(useMask: boolean): void {
 }
 
 function render(data: [string, string][]): void {
-  table.replaceChildren(
+  table.textContent = ''
+  table.append(
     ...data.map(([key, value]) => {
       const tr = document.createElement('tr')
+      tr.classList.toggle('error', key === 'Error')
       tr.insertCell().textContent = key
       tr.insertCell().textContent = value
       return tr
