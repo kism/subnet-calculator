@@ -1,0 +1,72 @@
+body {
+  background: #d4d0c8;
+  color: #000;
+  font:
+    12px "Fira Code",
+    monospace;
+  margin: 20px;
+}
+
+main {
+  width: 380px;
+  margin: 0 auto;
+}
+
+fieldset {
+  background: linear-gradient(#fdfdfd, #e6e6e6);
+  border: 1px solid #888;
+  padding: 8px;
+}
+
+legend {
+  font-weight: bold;
+  padding: 0 4px;
+}
+
+input,
+select {
+  font: inherit;
+  border: 1px solid #7f9db9;
+  padding: 1px 2px;
+}
+
+#ip {
+  width: 220px;
+}
+
+#masks:not([hidden]) {
+  margin-top: 8px;
+  display: flex;
+  gap: 4px;
+}
+
+.box {
+  border: 1px dotted transparent;
+  padding: 3px;
+}
+
+.box.active {
+  border-color: #316ac5;
+  background: #eef3fb;
+}
+
+table {
+  width: 100%;
+  margin-top: 8px;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+td {
+  border: 1px solid #c0c0c0;
+  padding: 2px 6px;
+}
+
+tr:nth-child(even) {
+  background: #f0f0f0;
+}
+
+td:first-child {
+  width: 90px;
+  font-weight: bold;
+}

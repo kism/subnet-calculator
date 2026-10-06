@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <!-- %VITE_SOURCE% -->
+  <head>
+    <meta charset="utf-8" />
+    <title>Subnet calculator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
+    <script type="module" src="/src/main.ts"></script>
+  </head>
+  <body>
+    <main>
+      <fieldset>
+        <legend>Subnet calculator</legend>
+        <label>IP address <input id="ip" placeholder="192.168.1.10/24" spellcheck="false" /></label>
+        <div id="masks" hidden>
+          <label class="box active" id="prefix-box">
+            Prefix <select id="prefix"></select>
+          </label>
+          <label class="box" id="mask-box">
+            Netmask <input id="mask" placeholder="255.255.255.0" size="15" spellcheck="false" />
+          </label>
+        </div>
+      </fieldset>
+      <table id="info"></table>
+    </main>
+  </body>
+</html>
