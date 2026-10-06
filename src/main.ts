@@ -5,22 +5,17 @@ import { calculate, formatIp, maskToPrefix, parseIp, parsePrefix, prefixToMask }
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T
 const ipInput = $<HTMLInputElement>('ip')
-const prefixSelect = $<HTMLSelectElement>('prefix')
+const prefixSlider = $<HTMLInputElement>('prefix')
+const prefixOut = $<HTMLOutputElement>('prefix-out')
 const maskInput = $<HTMLInputElement>('mask')
-const prefixBox = $<HTMLLabelElement>('prefix-box')
-const maskBox = $<HTMLLabelElement>('mask-box')
 const table = $<HTMLTableElement>('info')
 
-for (let p = 32; p >= 0; p--) prefixSelect.add(new Option(`/${p}  ${formatIp(prefixToMask(p))}`, String(p)))
-prefixSelect.value = '24'
 maskInput.value = '255.255.255.0'
 
 let maskActive = false
 
 function setActive(useMask: boolean): void {
   maskActive = useMask
-  maskBox.classList.toggle('active', useMask)
-  prefixBox.classList.toggle('active', !useMask)
   update()
 }
 
@@ -39,21 +34,22 @@ function render(data: [string, string][]): void {
 
 // Keep the inactive box in step with the active one (or both with a /suffix)
 function syncMasks(prefix: number): void {
-  prefixSelect.value = String(prefix)
+  prefixSlider.value = String(prefix)
+  prefixOut.textContent = `/${prefix}`
   if (maskToPrefix(maskInput.value) !== prefix) maskInput.value = formatIp(prefixToMask(prefix))
 }
 
 function rows(): [string, string][] {
   const value = ipInput.value.trim()
   const slash = value.indexOf('/')
-  prefixSelect.disabled = maskInput.disabled = slash !== -1
+  prefixSlider.disabled = maskInput.disabled = slash !== -1
 
   const prefix =
     slash !== -1
       ? parsePrefix(value.slice(slash + 1))
       : maskActive
         ? maskToPrefix(maskInput.value)
-        : Number(prefixSelect.value)
+        : Number(prefixSlider.value)
   if (prefix !== null) syncMasks(prefix)
 
   if (value === '') return []
@@ -79,11 +75,17 @@ function update(): void {
 }
 
 ipInput.addEventListener('input', update)
-prefixSelect.addEventListener('focus', () => setActive(false))
-prefixSelect.addEventListener('change', () => setActive(false))
+prefixSlider.addEventListener('focus', () => setActive(false))
+prefixSlider.addEventListener('input', () => setActive(false))
 maskInput.addEventListener('focus', () => setActive(true))
 maskInput.addEventListener('input', () => setActive(true))
 update()
+// Focus the IP box and select any text the browser restored (refresh/back)
+ipInput.select()
+document.addEventListener('keydown', (e) => {
+  // Leave Enter on the zoom buttons alone so it still presses them
+  if (e.key === 'Enter' && !(e.target instanceof HTMLButtonElement)) ipInput.select()
+})
 
 let fontSize = 12
 function zoom(size: number): void {

@@ -9,7 +9,7 @@ body {
 }
 
 main {
-  width: 31.667em;
+  width: 40em;
   margin: 0 auto;
 }
 
@@ -24,31 +24,151 @@ legend {
   padding: 0 0.333em;
 }
 
-input,
-select {
+::selection {
+  background: #008080;
+  color: #fff;
+}
+
+/* Windows 98 style sunken field */
+#ip,
+#mask {
   font: inherit;
-  border: 1px solid #7f9db9;
-  padding: 1px 0.167em;
+  border: 1px solid;
+  border-color: #808080 #fff #fff #808080;
+  box-shadow:
+    inset 1px 1px #404040,
+    inset -1px -1px #d4d0c8;
+  padding: 0.167em 0.25em;
+  outline: none;
 }
 
 #ip {
-  width: 18.333em;
+  width: 14em;
 }
 
-#masks {
-  margin-top: 0.667em;
+#addr {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   gap: 0.333em;
+}
+
+#prefix-box {
+  display: block;
+  margin-top: 0.667em;
+}
+
+#slider {
+  display: block;
+  position: relative;
+  height: 3em;
+}
+
+#prefix {
+  font: inherit;
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 1.333em;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+/* Thumb and track sized in em so the labels below line up at every zoom */
+#prefix::-webkit-slider-runnable-track {
+  height: 0.333em;
+  background: #fff;
+  box-shadow: inset 0 0 0 1px #888;
+}
+
+#prefix::-moz-range-track {
+  height: 0.333em;
+  background: #fff;
+  box-shadow: inset 0 0 0 1px #888;
+}
+
+#prefix::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  box-sizing: border-box;
+  width: 1em;
+  height: 1.333em;
+  margin-top: -0.5em;
+  background: #d4d0c8;
+  border: 1px solid;
+  border-color: #fff #404040 #404040 #fff;
+  border-radius: 0;
+}
+
+#prefix::-moz-range-thumb {
+  box-sizing: border-box;
+  width: 1em;
+  height: 1.333em;
+  background: #d4d0c8;
+  border: 1px solid;
+  border-color: #fff #404040 #404040 #fff;
+  border-radius: 0;
+}
+
+/* Grow the handle on hover/drag; scale, not width, so the labels stay aligned */
+#prefix::-webkit-slider-thumb {
+  transition: transform 0.1s;
+}
+
+#prefix::-moz-range-thumb {
+  transition: transform 0.1s;
+}
+
+#prefix:enabled:hover::-webkit-slider-thumb,
+#prefix:enabled:active::-webkit-slider-thumb {
+  transform: scale(1.25);
+}
+
+#prefix:enabled:hover::-moz-range-thumb,
+#prefix:enabled:active::-moz-range-thumb {
+  transform: scale(1.25);
+}
+
+#prefix:disabled::-webkit-slider-runnable-track {
+  background: #ebebe4;
+  box-shadow: inset 0 0 0 1px #c0c0c0;
+}
+
+#prefix:disabled::-moz-range-track {
+  background: #ebebe4;
+  box-shadow: inset 0 0 0 1px #c0c0c0;
+}
+
+#prefix:disabled::-webkit-slider-thumb {
+  background: #ebebe4;
+  border-color: #c0c0c0;
+}
+
+#prefix:disabled::-moz-range-thumb {
+  background: #ebebe4;
+  border-color: #c0c0c0;
+}
+
+#slider span {
+  position: absolute;
+  top: 1.333em;
+  left: calc(var(--p) / 32 * (100% - 1em) + 0.5em);
+  transform: translateX(-50%);
+}
+
+#slider span::before {
+  content: "";
+  display: block;
+  width: 1px;
+  height: 0.333em;
+  margin: 0 auto;
+  background: #888;
 }
 
 .box {
   border: 1px dotted transparent;
   padding: 0.25em;
-}
-
-.box.active {
-  border-color: #316ac5;
-  background: #eef3fb;
 }
 
 table {
@@ -80,8 +200,6 @@ select:disabled {
 
 .box:has(:disabled) {
   color: #888;
-  border-color: transparent;
-  background: none;
 }
 
 #zoom {
@@ -93,6 +211,30 @@ select:disabled {
 
 button {
   font: inherit;
+  background: #d4d0c8;
+  border: 1px solid;
+  border-color: #fff #404040 #404040 #fff;
+  box-shadow:
+    inset -1px -1px #808080,
+    inset 1px 1px #dfdfdf;
+  padding: 0.167em 0.5em;
+}
+
+button:active {
+  border-color: #404040 #fff #fff #404040;
+  box-shadow:
+    inset 1px 1px #808080,
+    inset -1px -1px #dfdfdf;
+}
+
+button:focus,
+#prefix:focus {
+  outline: 1px dotted #000;
+  outline-offset: -4px;
+}
+
+#prefix:focus {
+  outline-offset: 1px;
 }
 
 @media (max-width: 600px) {
