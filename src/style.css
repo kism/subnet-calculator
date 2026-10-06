@@ -34,7 +34,7 @@ select {
   width: 220px;
 }
 
-#masks:not([hidden]) {
+#masks {
   margin-top: 8px;
   display: flex;
   gap: 4px;
@@ -69,4 +69,16 @@ tr:nth-child(even) {
 td:first-child {
   width: 90px;
   font-weight: bold;
+}
+
+input:disabled,
+select:disabled {
+  background: #ebebe4;
+  color: #888;
+}
+
+.box:has(:disabled) {
+  color: #888;
+  border-color: transparent;
+  background: none;
 }
