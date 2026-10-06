@@ -87,7 +87,7 @@ update()
 ipInput.select()
 document.addEventListener('keydown', (e) => {
   // Leave Enter on the zoom buttons alone so it still presses them
-  if (e.key === 'Enter' && !(e.target instanceof HTMLButtonElement)) ipInput.select()
+  if (e.key === 'Escape' || (e.key === 'Enter' && !(e.target instanceof HTMLButtonElement))) ipInput.select()
 })
 
 let fontSize = 12
