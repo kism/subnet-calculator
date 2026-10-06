@@ -89,7 +89,10 @@ let fontSize = 12
 function zoom(size: number): void {
   fontSize = Math.min(32, Math.max(8, size))
   document.body.style.fontSize = `${fontSize}px`
+  // biome-ignore lint/suspicious/noDocumentCookie: Cookie Store API is too new for the es2015 target
+  document.cookie = `zoom=${fontSize}; max-age=31536000; path=/; SameSite=Lax`
 }
 $('smaller').addEventListener('click', () => zoom(fontSize - 2))
 $('bigger').addEventListener('click', () => zoom(fontSize + 2))
 $('reset').addEventListener('click', () => zoom(12))
+zoom(Number(/(?:^|; )zoom=(\d+)/.exec(document.cookie)?.[1] ?? 12))
