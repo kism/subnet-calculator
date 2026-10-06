@@ -9,7 +9,7 @@
     <script type="module" src="/src/main.ts"></script>
   </head>
   <body class="desktop">
-    <main class="window">
+    <main class="window" tabindex="-1">
       <div class="title-bar"><div class="title-bar-text">Subnet calculator</div></div>
       <div class="window-body">
         <div id="addr">
@@ -29,10 +29,22 @@
         <table id="info"></table>
       </div>
     </main>
-    <div id="zoom">
-      <button type="button" id="smaller">A-</button>
-      <button type="button" id="reset">A</button>
-      <button type="button" id="bigger">A+</button>
+    <div id="controls" class="window" tabindex="-1">
+      <div class="title-bar"><div class="title-bar-text">Settings</div></div>
+      <div class="window-body">
+        <div>
+          <div>
+            <button type="button" id="smaller">A-</button>
+            <button type="button" id="reset">A</button>
+            <button type="button" id="bigger">A+</button>
+          </div>
+          <div>
+            <button type="button" id="prev-skin">&lt;</button>
+            <button type="button" id="skin"></button>
+            <button type="button" id="next-skin">&gt;</button>
+          </div>
+        </div>
+      </div>
     </div>
   </body>
 </html>

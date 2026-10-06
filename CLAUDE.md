@@ -29,7 +29,8 @@ Use the Node version in `.nvmrc` (26) and npm.
   - A `/suffix` on the IP (either `/24` or `/255.255.255.0`) wins. When there's a suffix, both mask boxes are disabled and show the parsed prefix.
   - Without a suffix, whichever mask box was last used (`maskActive`) decides the prefix. `syncMasks()` copies a valid value into the other box.
   - Results are table rows. A row whose label is `Error` gets the red `.error` class.
-  - The A-/A/A+ buttons set `body` font-size and store it in a `zoom` cookie. Every size in `style.css` is in `em` (except 1px borders), so the whole panel scales. `#zoom` is fixed at 12px and hidden at ≤600px width.
+  - The A-/A/A+ buttons set `body` font-size and store it in a `zoom` cookie. Every size in `style.css` is in `em` (except 1px borders), so the whole panel scales. `#controls` (zoom and skin buttons) is fixed at 12px and hidden at ≤600px width.
+  - The `<`/name/`>` buttons cycle through every CDE skin from `classic-stylesheets`. All skins are bundled via `import.meta.glob(..., { query: '?inline' })` and the chosen one is written into a `<style>` and a `skin` cookie. The default is `crimson-4`.
 
 ## Gotchas
 

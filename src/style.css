@@ -12,6 +12,12 @@ main {
   margin: 0 auto;
 }
 
+/* Windows take focus (tabindex=-1) so clicking the title bar activates them; the theme's
+   :focus-within styling is the focus indicator, so no outline */
+.window:focus {
+  outline: none;
+}
+
 .window-body {
   padding: 0.667em;
 }
@@ -104,6 +110,7 @@ main {
   margin-top: 0.667em;
   border-collapse: collapse;
   background: var(--input-bg);
+  color: var(--input-fg);
 }
 
 td {
@@ -124,11 +131,29 @@ td:first-child {
   color: var(--button-dark);
 }
 
-#zoom {
+/* Settings window: fixed px font so A-/A+ don't scale it */
+#controls {
   position: fixed;
   right: 18px;
   bottom: 8px;
   font-size: 12px;
+  text-align: center;
+}
+
+/* Drop the theme's raised panel so the buttons sit straight in the window body */
+#controls .window-body > div {
+  border: 0;
+  background: none;
+  padding: 0.5em;
+}
+
+#controls .window-body > div > div + div {
+  margin-top: 0.333em;
+}
+
+/* Fits the longest skin name (northern-sky-8) so the < button doesn't jump around */
+#skin {
+  min-width: 10em;
 }
 
 button {
@@ -136,7 +161,7 @@ button {
 }
 
 @media (max-width: 600px) {
-  #zoom {
+  #controls {
     display: none;
   }
 }
