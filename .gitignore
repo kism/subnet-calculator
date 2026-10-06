@@ -3,3 +3,4 @@ dist/
 .wrangler/
 tests/cases.json
 coverage/
+.env
