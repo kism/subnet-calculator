@@ -87,6 +87,12 @@ prefixSlider.addEventListener('input', () => setActive(false))
 maskInput.addEventListener('focus', () => setActive(true))
 maskInput.addEventListener('input', () => setActive(true))
 update()
+// Phones have no other window to switch to, so keep the calculator styled as focused (same breakpoint as style.css)
+const phone = matchMedia('(max-width: 600px)')
+const keepActive = () => document.querySelector('main')?.classList.toggle('active', phone.matches)
+keepActive()
+// addListener rather than addEventListener: MediaQueryList only got EventTarget in Safari 14
+phone.addListener(keepActive)
 // Focus the IP box and select any text the browser restored (refresh/back)
 ipInput.select()
 document.addEventListener('keydown', (e) => {
