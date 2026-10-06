@@ -143,7 +143,7 @@ function setSkin(index: number): void {
   // Show the window's focused look briefly so the skin's active colours are visible too
   windowEl.classList.add('active')
   clearTimeout(activeTimer)
-  activeTimer = window.setTimeout(() => windowEl.classList.remove('active'), 1000)
+  activeTimer = window.setTimeout(keepActive, 1000)
 }
 $('prev-skin').addEventListener('click', () => setSkin(skinIndex - 1))
 $('next-skin').addEventListener('click', () => setSkin(skinIndex + 1))
