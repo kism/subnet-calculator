@@ -10,7 +10,7 @@ const ipInput = $<HTMLInputElement>('ip')
 const prefixSlider = $<HTMLInputElement>('prefix')
 const prefixOut = $<HTMLOutputElement>('prefix-out')
 const maskInput = $<HTMLInputElement>('mask')
-const table = $<HTMLTableElement>('info')
+const info = $<HTMLDivElement>('info')
 
 maskInput.value = '255.255.255.0'
 
@@ -21,15 +21,20 @@ function setActive(useMask: boolean): void {
   update()
 }
 
+function panel(className: string, text: string): HTMLDivElement {
+  const div = document.createElement('div')
+  div.className = className
+  div.textContent = text
+  return div
+}
+
 function render(data: [string, string][]): void {
-  table.textContent = ''
-  table.append(
+  info.textContent = ''
+  info.append(
     ...data.map(([key, value]) => {
-      const tr = document.createElement('tr')
-      tr.classList.toggle('error', key === 'Error')
-      tr.insertCell().textContent = key
-      tr.insertCell().textContent = value
-      return tr
+      const row = panel(key === 'Error' ? 'flex-row error' : 'flex-row', '')
+      row.append(panel('lowered padding', key), panel('lowered padding grow', value))
+      return row
     }),
   )
 }

@@ -1,4 +1,4 @@
-/* Colours and widget looks come from the CDE theme (crimson-4 skin) imported in main.ts */
+/* Colours and widget looks come from the classic-stylesheets CDE theme and the skin main.ts loads */
 body {
   font:
     12px "DejaVu Mono",
@@ -104,26 +104,15 @@ main {
   padding: 0.25em;
 }
 
-/* id beats the theme's .window-body > * panel background */
+/* Result rows: a sunken label panel and a sunken value panel (layout.css .padding scaled to em) */
 #info {
-  width: 100%;
+  --padding: 0.167em 0.5em;
   margin-top: 0.667em;
-  border-collapse: collapse;
-  background: var(--input-bg);
-  color: var(--input-fg);
 }
 
-td {
-  border: 1px solid var(--input-dark);
-  padding: 0.167em 0.5em;
-}
-
-tr:nth-child(even) {
-  background: rgba(0, 0, 0, 0.05);
-}
-
-td:first-child {
+#info > div > :first-child {
   width: 7.5em;
+  flex-shrink: 0;
   font-weight: bold;
 }
 
