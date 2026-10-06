@@ -8,7 +8,7 @@ body {
 }
 
 main {
-  width: 40em;
+  max-width: 40em;
   margin: 0 auto;
 }
 
@@ -149,7 +149,29 @@ button {
   padding: 0.167em 0.5em;
 }
 
+/* Phones: the zoom buttons are hidden, so pin 16px on main (body has main.ts's inline size),
+   which also stops iOS zooming in on input focus */
 @media (max-width: 600px) {
+  body {
+    margin: 0.5em;
+  }
+
+  main {
+    font-size: 16px;
+  }
+
+  #ip {
+    width: 100%;
+  }
+
+  #addr > label:first-child {
+    flex: 1;
+  }
+
+  #info > div > :first-child {
+    width: 6em;
+  }
+
   #controls {
     display: none;
   }
