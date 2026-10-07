@@ -28,8 +28,10 @@ Use the Node version in `.nvmrc` (26) and npm.
 - `src/main.ts` holds the DOM wiring.
   - A `/suffix` on the IP (either `/24` or `/255.255.255.0`) wins. When there's a suffix, both mask boxes are disabled and show the parsed prefix.
   - Without a suffix, whichever mask box was last used (`maskActive`) decides the prefix. `syncMasks()` copies a valid value into the other box.
+  - Once the IP box has held a valid value for a second, `update()` saves it (whitespace stripped) to an `ip` cookie. On load that cookie pre-fills the box.
   - Results are `flex-row` divs of two `.lowered .padding` panels (classes from `classic-stylesheets`) inside the `.raised` `#info`. A row whose label is `Error` gets the red `.error` class.
-  - The A-/A/A+ buttons set `body` font-size and store it in a `zoom` cookie. Every size in `style.css` is in `em` (except 1px borders), so the whole panel scales. `#controls` (zoom and skin buttons) is fixed at 12px and hidden at ≤600px width.
+  - The A-/A/A+ buttons set `body` font-size and store it in a `zoom` cookie. Every size in `style.css` is in `em` (except 1px borders), so the whole panel scales. `#controls` (zoom and skin buttons) is fixed at 12px.
+  - At ≤600px width (phones), `main` is pinned at 16px and the zoom row (`#zoom`) is hidden. `body` becomes a full-height flex column and `#controls` a static, shrink-wrapped window pushed to the bottom right by auto margins. At the same breakpoint, `main.ts` keeps `main` styled `.active` unless Settings was the last window tapped or focused, in which case `#controls` gets `.active`. Taps count because iOS doesn't focus tapped buttons.
   - The `<`/name/`>` buttons cycle through every CDE skin from `classic-stylesheets`. All skins are bundled via `import.meta.glob(..., { query: '?inline' })` and the chosen one is written into a `<style>` and a `skin` cookie. The default is `crimson-4`.
 
 ## Gotchas

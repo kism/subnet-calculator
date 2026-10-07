@@ -77,8 +77,15 @@ function rows(): [string, string][] {
   ]
 }
 
+let saveTimer = 0
 function update(): void {
-  render(rows())
+  const data = rows()
+  render(data)
+  // Remember the last valid IP once it has stayed valid for a second. Valid input is only digits, dots, a slash
+  // and spaces, so dropping the spaces makes it cookie-safe
+  clearTimeout(saveTimer)
+  if (data[0][0] !== 'Error')
+    saveTimer = window.setTimeout(() => setCookie('ip', ipInput.value.replace(/\s/g, '')), 1000)
 }
 
 ipInput.addEventListener('input', update)
@@ -86,10 +93,32 @@ prefixSlider.addEventListener('focus', () => setActive(false))
 prefixSlider.addEventListener('input', () => setActive(false))
 maskInput.addEventListener('focus', () => setActive(true))
 maskInput.addEventListener('input', () => setActive(true))
+if (!ipInput.value) ipInput.value = getCookie('ip') ?? ''
 update()
-// Phones have no other window to switch to, so keep the calculator styled as focused (same breakpoint as style.css)
+// Phones (same breakpoint as style.css) keep the calculator styled as focused unless Settings was the last window
+// used. Taps are tracked as well as focus because iOS doesn't focus a tapped button.
 const phone = matchMedia('(max-width: 600px)')
-const keepActive = () => document.querySelector('main')?.classList.toggle('active', phone.matches)
+const mainEl = document.querySelector('main') as HTMLElement
+const controls = $('controls')
+let settingsActive = false
+function keepActive(): void {
+  mainEl.classList.toggle('active', phone.matches && !settingsActive)
+  controls.classList.toggle('active', phone.matches && settingsActive)
+}
+function trackWindow(e: Event): void {
+  settingsActive = controls.contains(e.target as Node)
+  // Otherwise a focused input keeps the calculator lit through the theme's :focus-within
+  if (
+    settingsActive &&
+    phone.matches &&
+    document.activeElement instanceof HTMLElement &&
+    mainEl.contains(document.activeElement)
+  )
+    document.activeElement.blur()
+  keepActive()
+}
+document.addEventListener('mousedown', trackWindow)
+document.addEventListener('focusin', trackWindow)
 keepActive()
 // addListener rather than addEventListener: MediaQueryList only got EventTarget in Safari 14
 phone.addListener(keepActive)
@@ -131,7 +160,6 @@ const skinCss = Object.keys(skinFiles).map((path) => skinFiles[path])
 const defaultSkin = skinNames.indexOf('crimson-4')
 const skinStyle = document.head.appendChild(document.createElement('style'))
 const skinButton = $<HTMLButtonElement>('skin')
-const windowEl = document.querySelector('main') as HTMLElement
 let activeTimer = 0
 
 let skinIndex = defaultSkin
@@ -140,8 +168,9 @@ function setSkin(index: number): void {
   skinStyle.textContent = skinCss[skinIndex]
   skinButton.textContent = skinNames[skinIndex]
   setCookie('skin', skinNames[skinIndex])
-  // Show the window's focused look briefly so the skin's active colours are visible too
-  windowEl.classList.add('active')
+  // Show the window's focused look briefly so the skin's active colours are visible too. Not on phones,
+  // where Settings is already styled as focused while you pick a skin
+  if (!phone.matches) mainEl.classList.add('active')
   clearTimeout(activeTimer)
   activeTimer = window.setTimeout(keepActive, 1000)
 }

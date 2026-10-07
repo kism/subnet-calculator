@@ -152,12 +152,21 @@ button {
 /* Phones: the zoom buttons are hidden, so pin 16px on main (body has main.ts's inline size),
    which also stops iOS zooming in on input focus */
 @media (max-width: 600px) {
+  /* Flex column so #controls' margin-top: auto drops it to the bottom of the screen when there's room.
+     dvh excludes Safari's toolbar; older browsers fall back to vh */
   body {
     margin: 0.5em;
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - 1em);
+    /* biome-ignore lint/suspicious/noDuplicateProperties: vh above is the fallback for browsers without dvh */
+    min-height: calc(100dvh - 1em);
   }
 
   main {
     font-size: 16px;
+    width: 100%;
+    margin-bottom: 0.5em;
   }
 
   #addr {
@@ -173,12 +182,32 @@ button {
     padding: 0;
   }
 
+  /* "Broadcast" (9ch) plus the 0.5em padding and 1px border each side, with 2px spare because
+     subpixel rounding can leave an exact fit a hair short */
   #info > div > :first-child {
-    width: 6em;
+    width: calc(9ch + 1em + 4px);
   }
 
+  /* On 320px screens a /32 address doesn't fit beside the label, so let it wrap rather than overflow */
+  #info > div > :last-child {
+    min-width: 0;
+    overflow-wrap: break-word;
+  }
+
+  /* Skin picker at the bottom right, shrink-wrapped by the auto left margin */
   #controls {
+    position: static;
+    margin: auto 0 0 auto;
+    font-size: 16px;
+  }
+
+  /* Phones get no zoom: main is pinned at 16px */
+  #zoom {
     display: none;
+  }
+
+  #zoom + div {
+    margin-top: 0;
   }
 }
 

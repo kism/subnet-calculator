@@ -10,7 +10,8 @@
     "coverage": "npm test -- --coverage --coverage.reporter=text --coverage.reporter=lcovonly",
     "lint": "biome check",
     "format": "biome check --write",
-    "deploy": "npm run build && wrangler deploy"
+    "deploy": "npm run build && wrangler deploy",
+    "deploy:preview": "npm run build && wrangler preview"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.15",
