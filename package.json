@@ -9,21 +9,17 @@
     "test": "vitest run",
     "coverage": "npm test -- --coverage --coverage.reporter=text --coverage.reporter=lcovonly",
     "lint": "biome check",
-    "format": "biome check --write",
-    "deploy": "npm run build && wrangler deploy",
-    "deploy:preview": "npm run build && wrangler preview"
+    "format": "biome check --write"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.15",
     "@vitest/coverage-v8": "^5.0.3",
     "typescript": "^7.0.2",
     "vite": "^8.3.3",
-    "vitest": "^5.0.3",
-    "wrangler": "^4.147.0"
+    "vitest": "^5.0.3"
   },
   "allowScripts": {
     "esbuild@0.28.1": true,
-    "workerd@1.20261001.1": true,
     "fsevents@2.3.3": true
   },
   "dependencies": {

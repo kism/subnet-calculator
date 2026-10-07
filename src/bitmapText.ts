@@ -100,7 +100,7 @@ function drawTextNodes(): void {
   for (let node = walker.nextNode(); node; node = walker.nextNode()) {
     const text = node.textContent ?? ''
     const parent = node.parentElement
-    if (!text.trim() || !parent || parent.closest('script, style, #dev-font')) continue
+    if (!text.trim() || !parent || parent.closest('script, style')) continue
     const style = getComputedStyle(parent)
     if (style.visibility !== 'visible' || !fontLoaded(style)) continue
     const atlas = atlasFor(style)
