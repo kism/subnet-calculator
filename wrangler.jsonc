@@ -5,7 +5,12 @@
   "assets": {
     "directory": "./dist"
   },
-  "routes": [{ "pattern": "network.autist.network", "custom_domain": true }],
+  // Deploys replace every custom domain on the Worker with this list, so the Preview domain must live here too or a
+  // deploy removes it. enabled = serves production, previews_enabled = serves Previews at *.<pattern>
+  "routes": [
+    { "pattern": "network.autist.network", "custom_domain": true },
+    { "pattern": "network-preview.autist.network", "custom_domain": true, "enabled": false, "previews_enabled": true }
+  ],
   // Per-version preview links (<version>-subnet-calculator.<subdomain>.workers.dev) for non-production
   // branches. Wrangler leaves them unset when routes exist, so turn them on; the bare workers.dev URL stays off.
   "workers_dev": false,

@@ -1,10 +1,27 @@
 /* Colours and widget looks come from the classic-stylesheets CDE theme and the skin main.ts loads */
+/* Lucida from fonts.css, one family per zoom level; main.ts swaps size and family together.
+   Mobile browsers mustn't resize text on their own, or the pixel font lands on a non-whole size */
 body {
   font:
-    12px "DejaVu Mono",
-    "DejaVu Sans Mono",
-    monospace;
+    12px "Lucida Sans 12",
+    sans-serif;
   margin: 1.667em;
+  -webkit-text-size-adjust: none;
+  text-size-adjust: none;
+}
+
+/* The glyphs are pixel squares, so macOS's text smoothing (which thickens glyphs and softens their edges) only blurs
+   them: Chrome/Safari get none at all, Firefox (no "none") gets grayscale, which drops the thickening. Only at whole
+   pixel ratios: under browser zoom the squares can't line up with the screen, and unsmoothed they turn jagged.
+   Safari always reports a whole ratio, so it always gets smoothing off */
+/* biome-ignore lint/correctness/noUnknownMediaFeatureName: -webkit-device-pixel-ratio is how Safari answers */
+@media (resolution: 1dppx), (resolution: 2dppx), (resolution: 3dppx), (resolution: 4dppx),
+  (-webkit-device-pixel-ratio: 1), (-webkit-device-pixel-ratio: 2), (-webkit-device-pixel-ratio: 3),
+  (-webkit-device-pixel-ratio: 4) {
+  body {
+    -webkit-font-smoothing: none;
+    -moz-osx-font-smoothing: grayscale;
+  }
 }
 
 main {
@@ -125,7 +142,9 @@ main {
   position: fixed;
   right: 18px;
   bottom: 8px;
-  font-size: 12px;
+  font:
+    12px "Lucida Sans 12",
+    sans-serif;
   text-align: center;
 }
 
@@ -149,8 +168,7 @@ button {
   padding: 0.167em 0.5em;
 }
 
-/* Phones: the zoom buttons are hidden, so pin 16px on main (body has main.ts's inline size),
-   which also stops iOS zooming in on input focus */
+/* Phones: the zoom buttons are hidden, so main gets a fixed size (body has main.ts's inline font) */
 @media (max-width: 600px) {
   /* Flex column so #controls' margin-top: auto drops it to the bottom of the screen when there's room.
      dvh excludes Safari's toolbar; older browsers fall back to vh */
@@ -163,8 +181,11 @@ button {
     min-height: calc(100dvh - 1em);
   }
 
+  /* 18px: a native Lucida size, and at least 16px so iOS doesn't zoom in on input focus */
   main {
-    font-size: 16px;
+    font:
+      18px "Lucida Sans 18",
+      sans-serif;
     width: 100%;
     margin-bottom: 0.5em;
   }
@@ -182,13 +203,17 @@ button {
     padding: 0;
   }
 
-  /* "Broadcast" (9ch) plus the 0.5em padding and 1px border each side, with 2px spare because
-     subpixel rounding can leave an exact fit a hair short */
+  /* Bold "Broadcast" is 102px at the fixed 18px; plus padding and borders that's 122px, so 6.875em (123.75px) */
   #info > div > :first-child {
-    width: calc(9ch + 1em + 4px);
+    width: 6.875em;
   }
 
-  /* On 320px screens a /32 address doesn't fit beside the label, so let it wrap rather than overflow */
+  /* Tighter than desktop so a /32 address fits beside its label from 375px wide */
+  .window-body {
+    padding: 0.333em;
+  }
+
+  /* Narrower than that, long values wrap at a slash or dot (main.ts adds <wbr>s), or anywhere as a last resort */
   #info > div > :last-child {
     min-width: 0;
     overflow-wrap: break-word;
@@ -198,10 +223,12 @@ button {
   #controls {
     position: static;
     margin: auto 0 0 auto;
-    font-size: 16px;
+    font:
+      18px "Lucida Sans 18",
+      sans-serif;
   }
 
-  /* Phones get no zoom: main is pinned at 16px */
+  /* Phones get no zoom: main is pinned at 18px */
   #zoom {
     display: none;
   }
@@ -213,4 +240,26 @@ button {
 
 .error {
   color: #c00;
+}
+
+/* bitmapText.ts draws every glyph on #bitmap-text and adds .bitmap-text once its atlases load; the real text stays
+   for selection, copy and the caret but is see-through (fill only, so color still gives the glyphs their colour) */
+/* pixelated: when the browser scales the canvas anyway (pinch zoom), enlarge the pixels rather than blur them */
+#bitmap-text {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  image-rendering: pixelated;
+  z-index: 2147483647;
+}
+
+.bitmap-text body,
+.bitmap-text input,
+.bitmap-text input::placeholder {
+  -webkit-text-fill-color: transparent;
+}
+
+.bitmap-text #dev-font {
+  -webkit-text-fill-color: currentColor;
 }

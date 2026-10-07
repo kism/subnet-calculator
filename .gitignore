@@ -4,3 +4,6 @@ dist/
 tests/cases.json
 coverage/
 .env
+font_wip
+*.pyc
+__pycache__

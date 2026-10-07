@@ -1,0 +1,132 @@
+/* Solaris 2.6 Lucida Sans bitmaps (B&H), converted by scripts/pcf2woff.py with one square per pixel. One family per
+   zoom level (main.ts ZOOM_LEVELS), each the original 10/12/14/18px bitmaps or one of them doubled, regular and bold
+   always from the same size. bitmapText.ts draws the glyphs from the matching PNG atlas; these WOFFs give the
+   invisible real text the same advances, and are the visible fallback if the atlases don't load */
+
+@font-face {
+  font-family: "Lucida Sans 10";
+  font-weight: 400;
+  src:
+    url("./fonts/LucidaSans10.woff2") format("woff2"),
+    url("./fonts/LucidaSans10.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Lucida Sans 10";
+  font-weight: 700;
+  src:
+    url("./fonts/LucidaSans-Bold10.woff2") format("woff2"),
+    url("./fonts/LucidaSans-Bold10.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Lucida Sans 12";
+  font-weight: 400;
+  src:
+    url("./fonts/LucidaSans12.woff2") format("woff2"),
+    url("./fonts/LucidaSans12.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Lucida Sans 12";
+  font-weight: 700;
+  src:
+    url("./fonts/LucidaSans-Bold12.woff2") format("woff2"),
+    url("./fonts/LucidaSans-Bold12.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Lucida Sans 14";
+  font-weight: 400;
+  src:
+    url("./fonts/LucidaSans14.woff2") format("woff2"),
+    url("./fonts/LucidaSans14.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Lucida Sans 14";
+  font-weight: 700;
+  src:
+    url("./fonts/LucidaSans-Bold14.woff2") format("woff2"),
+    url("./fonts/LucidaSans-Bold14.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Lucida Sans 18";
+  font-weight: 400;
+  src:
+    url("./fonts/LucidaSans18.woff2") format("woff2"),
+    url("./fonts/LucidaSans18.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Lucida Sans 18";
+  font-weight: 700;
+  src:
+    url("./fonts/LucidaSans-Bold18.woff2") format("woff2"),
+    url("./fonts/LucidaSans-Bold18.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Lucida Sans 20";
+  font-weight: 400;
+  src:
+    url("./fonts/LucidaSans10.woff2") format("woff2"),
+    url("./fonts/LucidaSans10.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Lucida Sans 20";
+  font-weight: 700;
+  src:
+    url("./fonts/LucidaSans-Bold10.woff2") format("woff2"),
+    url("./fonts/LucidaSans-Bold10.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Lucida Sans 24";
+  font-weight: 400;
+  src:
+    url("./fonts/LucidaSans12.woff2") format("woff2"),
+    url("./fonts/LucidaSans12.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Lucida Sans 24";
+  font-weight: 700;
+  src:
+    url("./fonts/LucidaSans-Bold12.woff2") format("woff2"),
+    url("./fonts/LucidaSans-Bold12.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Lucida Sans 28";
+  font-weight: 400;
+  src:
+    url("./fonts/LucidaSans14.woff2") format("woff2"),
+    url("./fonts/LucidaSans14.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Lucida Sans 28";
+  font-weight: 700;
+  src:
+    url("./fonts/LucidaSans-Bold14.woff2") format("woff2"),
+    url("./fonts/LucidaSans-Bold14.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Lucida Sans 36";
+  font-weight: 400;
+  src:
+    url("./fonts/LucidaSans18.woff2") format("woff2"),
+    url("./fonts/LucidaSans18.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Lucida Sans 36";
+  font-weight: 700;
+  src:
+    url("./fonts/LucidaSans-Bold18.woff2") format("woff2"),
+    url("./fonts/LucidaSans-Bold18.woff") format("woff");
+}

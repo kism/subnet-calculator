@@ -1,8 +1,8 @@
-import '@fontsource/dejavu-mono/400.css'
-import '@fontsource/dejavu-mono/700.css'
 import 'classic-stylesheets/layout.css'
 import 'classic-stylesheets/themes/cde/theme.css'
+import './fonts.css'
 import './style.css'
+import './bitmapText'
 import { calculate, formatIp, maskToPrefix, parseIp, parsePrefix, prefixToMask } from './subnet'
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T
@@ -33,7 +33,15 @@ function render(data: [string, string][]): void {
   info.append(
     ...data.map(([key, value]) => {
       const row = panel(key === 'Error' ? 'flex-row error' : 'flex-row', '')
-      row.append(panel('lowered padding', key), panel('lowered padding grow', value))
+      const valuePanel = panel('lowered padding grow', '')
+      // On narrow phones, wrap before a slash or after a dot rather than mid-octet; unlike a zero-width space,
+      // <wbr> isn't copied
+      for (const part of value.split(/([./])/)) {
+        if (part === '/') valuePanel.append(document.createElement('wbr'))
+        valuePanel.append(part)
+        if (part === '.') valuePanel.append(document.createElement('wbr'))
+      }
+      row.append(panel('lowered padding', key), valuePanel)
       return row
     }),
   )
@@ -122,6 +130,7 @@ document.addEventListener('focusin', trackWindow)
 keepActive()
 // addListener rather than addEventListener: MediaQueryList only got EventTarget in Safari 14
 phone.addListener(keepActive)
+phone.addListener(showFontReadout)
 // Focus the IP box and select any text the browser restored (refresh/back)
 ipInput.select()
 document.addEventListener('keydown', (e) => {
@@ -138,16 +147,68 @@ function setCookie(name: string, value: string | number): void {
   document.cookie = `${name}=${value}; max-age=31536000; path=/; SameSite=Lax`
 }
 
-let fontSize = 12
-function zoom(size: number): void {
-  fontSize = Math.min(32, Math.max(8, size))
-  document.body.style.fontSize = `${fontSize}px`
-  setCookie('zoom', fontSize)
+// Centring main in an odd-width body puts it on a half pixel, which blurs every glyph of the pixel font, so keep the
+// body an even number of pixels wide. Rerun when the viewport or the em-sized body margin changes
+function evenBodyWidth(): void {
+  document.body.style.width = ''
+  document.body.style.width = `${document.body.clientWidth & ~1}px`
 }
-$('smaller').addEventListener('click', () => zoom(fontSize - 2))
-$('bigger').addEventListener('click', () => zoom(fontSize + 2))
-$('reset').addEventListener('click', () => zoom(12))
-zoom(Number(getCookie('zoom') ?? 12))
+addEventListener('resize', evenBodyWidth)
+
+// Each has a "Lucida Sans <size>" family in fonts.css: an original 10/12/14/18px bitmap or one doubled. bitmapText.ts
+// snaps every glyph to whole pixels, so these all stay sharp; 8 was too small and 16 (8px doubled) too blocky
+const ZOOM_LEVELS = [10, 12, 14, 18, 20, 24, 28, 36]
+let zoomIndex = ZOOM_LEVELS.indexOf(12)
+function zoom(index: number): void {
+  zoomIndex = Math.min(ZOOM_LEVELS.length - 1, Math.max(0, index))
+  const size = ZOOM_LEVELS[zoomIndex]
+  document.body.style.font = `${size}px "Lucida Sans ${size}", sans-serif`
+  setCookie('zoom', size)
+  evenBodyWidth()
+  showFontReadout()
+}
+$('smaller').addEventListener('click', () => zoom(zoomIndex - 1))
+$('bigger').addEventListener('click', () => zoom(zoomIndex + 1))
+$('reset').addEventListener('click', () => zoom(ZOOM_LEVELS.indexOf(12)))
+// A saved size from before the levels changed (e.g. 22) snaps to the next level down
+const savedZoom = Number(getCookie('zoom')) || 12
+zoom(ZOOM_LEVELS.filter((size) => size <= savedZoom).length - 1)
+
+// Browser zoom gives a fractional pixel ratio, where the bitmap glyphs can't keep even pixels, so on desktop its
+// shortcuts drive the page's own levels instead. The View menu's zoom can't be intercepted; bitmapText copes with it
+addEventListener('keydown', (e) => {
+  if (!(e.metaKey || e.ctrlKey) || e.altKey || phone.matches) return
+  const step = e.key === '=' || e.key === '+' ? 1 : e.key === '-' ? -1 : e.key === '0' ? 0 : null
+  if (step === null) return
+  e.preventDefault()
+  zoom(step ? zoomIndex + step : ZOOM_LEVELS.indexOf(12))
+})
+// Trackpad pinch arrives as ctrl+wheel in Chrome and Firefox: one level per 50px of pinch
+let pinch = 0
+addEventListener(
+  'wheel',
+  (e) => {
+    if (!e.ctrlKey || phone.matches) return
+    e.preventDefault()
+    pinch -= e.deltaY
+    if (Math.abs(pinch) < 50) return
+    zoom(zoomIndex + Math.sign(pinch))
+    pinch = 0
+  },
+  { passive: false },
+)
+// ...and as gesture events in Safari, with the scale since the pinch began: one level per √2
+let gestureStart = 0
+addEventListener('gesturestart', (e) => {
+  if (phone.matches) return
+  e.preventDefault()
+  gestureStart = zoomIndex
+})
+addEventListener('gesturechange', (e) => {
+  if (phone.matches) return
+  e.preventDefault()
+  zoom(gestureStart + Math.round(Math.log2((e as Event & { scale: number }).scale) * 2))
+})
 
 // All CDE skins are bundled (~9 kB gzipped); the chosen one is swapped into a <style>
 const skinFiles = import.meta.glob<string>('/node_modules/classic-stylesheets/themes/cde/skins/*.css', {
@@ -179,3 +240,18 @@ $('next-skin').addEventListener('click', () => setSkin(skinIndex + 1))
 skinButton.addEventListener('click', () => setSkin(defaultSkin))
 const savedSkin = skinNames.indexOf(getCookie('skin') ?? '')
 setSkin(savedSkin === -1 ? defaultSkin : savedSkin)
+
+// Dev server only (import.meta.env.DEV is false in builds, so this is dropped): red readout of the calculator's
+// actual font, which on phones is main's fixed size rather than the zoom level
+function showFontReadout(): void {
+  if (!import.meta.env.DEV) return
+  let readout = document.getElementById('dev-font')
+  if (!readout) {
+    readout = document.body.appendChild(document.createElement('div'))
+    readout.id = 'dev-font'
+    readout.style.cssText =
+      'position:fixed;bottom:2px;left:4px;z-index:9;color:red;font:bold 12px monospace;pointer-events:none'
+  }
+  const style = getComputedStyle(mainEl)
+  readout.textContent = `${style.fontSize} ${style.fontFamily} @ ${devicePixelRatio}x`
+}
