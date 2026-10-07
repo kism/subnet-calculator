@@ -163,6 +163,8 @@ function zoom(index: number): void {
   const size = ZOOM_LEVELS[zoomIndex]
   document.body.style.font = `${size}px "Lucida Sans ${size}", sans-serif`
   setCookie('zoom', size)
+  $<HTMLButtonElement>('smaller').disabled = zoomIndex === 0
+  $<HTMLButtonElement>('bigger').disabled = zoomIndex === ZOOM_LEVELS.length - 1
   evenBodyWidth()
 }
 $('smaller').addEventListener('click', () => zoom(zoomIndex - 1))
