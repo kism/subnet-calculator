@@ -116,8 +116,12 @@ def parse_pcf(data: bytes) -> dict:
             text = agl.toUnicode(string(o))
             if len(text) == 1:
                 cmap.setdefault(ord(text), index)
-        # ASCII keeps the X11 glyphs Solaris actually drew: ' and ` as curly quoteright/quoteleft, - as minus
-        cmap.update({code: index for code, index in encoding.items() if code < 0x80})
+        # ASCII keeps the X11 glyphs Solaris actually drew: ' and ` as curly quoteright/quoteleft. Not - though: X11
+        # drew it as minus, which is as wide as its advance and runs into the next character ("crimson-4")
+        cmap.update({code: index for code, index in encoding.items() if code < 0x80 and code != 0x2D})
+    # The 10/12px hyphens end on their advance too, touching a following 4 or 7 (which start at column 0); give 1px
+    if 0x2D in cmap and (hyphen := glyphs[cmap[0x2D]])["rows"]:
+        hyphen["width"] = max(hyphen["width"], hyphen["left"] + len(hyphen["rows"][0]) + 1)
     return {"props": props, "ascent": font_ascent, "descent": font_descent, "glyphs": glyphs, "cmap": cmap}
 
 
