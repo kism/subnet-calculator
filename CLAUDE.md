@@ -52,5 +52,6 @@ Use the Node version in `.nvmrc` (26) and npm.
   - The proportional font makes `ch` a bad width unit, so label widths are in `em` measured against bold "Broadcast".
 - `scripts/build.sh` passes the git remote URL (with credentials stripped) and the HEAD sha to Vite as `VITE_SOURCE`.
   - Vite fills that into the `<!-- %VITE_SOURCE% -->` comment in `index.html`.
+  - `.env.development` gives `npm run dev` a placeholder, so Vite doesn't warn that the variable is undefined.
   - The script tolerates there being no git repo or remote.
   - Keep the credential stripping if you change the script.
