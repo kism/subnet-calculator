@@ -27,14 +27,14 @@ const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
 const atlases: Record<string, Atlas> = {}
 
 // The atlas matching the invisible text's "<font> <zoom level>" family (fonts.css) and weight: the largest original
-// bitmap size that divides the level (20 is 10x2, 36 is 18x2...)
-function atlasFor(style: CSSStyleDeclaration): Atlas {
-  const [, family = 'Lucida Sans', size = '12'] = /([A-Za-z ]+) (\d+)/.exec(style.fontFamily) || []
+// bitmap size that divides the level (20 is 10x2, 36 is 18x2...). None for an outline font, which the browser draws
+function atlasFor(style: CSSStyleDeclaration): Atlas | undefined {
+  const [, family, size] = /([A-Za-z ]+) (\d+)/.exec(style.fontFamily) || []
+  if (!family) return undefined
   const bold = Number(style.fontWeight) >= 600 || style.fontWeight === 'bold'
   const name = family.replace(/ /g, '') + (bold ? '-Bold' : '')
   const level = Number(size)
   for (let base = level; base > 0; base--) if (level % base === 0 && atlases[name + base]) return atlases[name + base]
-  return atlases.LucidaSans12
 }
 
 // The atlas in one colour (white glyphs recoloured with source-in), cached per colour
@@ -101,6 +101,7 @@ function drawTextNodes(): void {
     const style = getComputedStyle(parent)
     if (style.visibility !== 'visible' || !fontLoaded(style)) continue
     const atlas = atlasFor(style)
+    if (!atlas) continue
     const scale = parseFloat(style.fontSize) / atlas.size
     const tint = tinted(atlas, style.color)
     const selectedTint = selected.length ? tinted(atlas, selectionColour(parent)) : tint
@@ -127,6 +128,7 @@ function drawInputs(): void {
     const style = getComputedStyle(el)
     if (!fontLoaded(style)) continue
     const atlas = atlasFor(style)
+    if (!atlas) continue
     const scale = parseFloat(style.fontSize) / atlas.size
     const colour = placeholder ? getComputedStyle(el, '::placeholder').color : style.color
     const n = (s: string) => parseFloat(s) || 0

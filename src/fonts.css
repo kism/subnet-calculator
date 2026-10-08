@@ -404,3 +404,31 @@
     url("./fonts/Helvetica-Bold18.woff2") format("woff2"),
     url("./fonts/Helvetica-Bold18.woff") format("woff");
 }
+
+/* Luxi Sans and Serif (B&H, X.org font-bh-ttf 1.0.4), as used by NsCDE. One family for every size; the browser draws
+   them, not bitmapText.ts. Their licence forbids modifying the fonts, so they're the original TTFs, unconverted, beside
+   that licence in public/fonts/luxi/. The families end in TTF, as the switcher shows them, which also keeps a locally
+   installed Luxi from being used instead */
+@font-face {
+  font-family: "Luxi Sans TTF";
+  font-weight: 400;
+  src: url("/fonts/luxi/luxisr.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Luxi Sans TTF";
+  font-weight: 700;
+  src: url("/fonts/luxi/luxisb.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Luxi Serif TTF";
+  font-weight: 400;
+  src: url("/fonts/luxi/luxirr.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Luxi Serif TTF";
+  font-weight: 700;
+  src: url("/fonts/luxi/luxirb.ttf") format("truetype");
+}

@@ -3,6 +3,7 @@ import 'classic-stylesheets/themes/cde/theme.css'
 import './fonts.css'
 import './style.css'
 import './bitmapText'
+import { FONTS, OUTLINE } from './fonts'
 import { calculate, formatIp, maskToPrefix, parseIp, parsePrefix, prefixToMask } from './subnet'
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T
@@ -154,25 +155,17 @@ function evenBodyWidth(): void {
 }
 addEventListener('resize', evenBodyWidth)
 
-// Each font's zoom levels, each with a "<font> <size>" family in fonts.css. Lucida's are an original 10/12/14/18px
-// bitmap or one doubled (8 was too small and 16, 8px doubled, too blocky), Helvetica's likewise from 10/12/14/18/24;
-// Terminus has every level natively.
-// bitmapText.ts snaps every glyph to whole pixels, so these all stay sharp. Every font needs 12 (the default and
-// Settings) and 18 (phones)
-const FONTS: Record<string, number[]> = {
-  'Lucida Sans': [10, 12, 14, 18, 20, 24, 28, 36],
-  Terminus: [12, 14, 16, 18, 20, 22, 24, 28, 32],
-  Helvetica: [10, 12, 14, 18, 20, 24, 28, 36],
-}
 const fontNames = Object.keys(FONTS)
 const fontButton = $<HTMLButtonElement>('font')
 let fontIndex = 0
 let zoomIndex = 0
 const levels = () => FONTS[fontNames[fontIndex]]
+const outline = () => OUTLINE.indexOf(fontNames[fontIndex]) !== -1
+const family = (size: number) => (outline() ? `"${fontNames[fontIndex]}"` : `"${fontNames[fontIndex]} ${size}"`)
 function zoom(index: number): void {
   zoomIndex = Math.min(levels().length - 1, Math.max(0, index))
   const size = levels()[zoomIndex]
-  document.body.style.font = `${size}px "${fontNames[fontIndex]} ${size}", sans-serif`
+  document.body.style.font = `${size}px ${family(size)}, sans-serif`
   setCookie('zoom', size)
   $<HTMLButtonElement>('smaller').disabled = zoomIndex === 0
   $<HTMLButtonElement>('bigger').disabled = zoomIndex === levels().length - 1
@@ -189,8 +182,9 @@ function setFont(index: number, size = levels()[zoomIndex]): void {
   const name = fontNames[fontIndex]
   fontButton.textContent = name
   setCookie('font', encodeURIComponent(name))
-  // style.css's fixed-size text (Settings, phones)
-  for (const fixed of [12, 18]) document.documentElement.style.setProperty(`--family-${fixed}`, `"${name} ${fixed}"`)
+  // style.css's fixed-size text (Settings, phones), and whether bitmapText.ts hides the real text
+  for (const fixed of [12, 18]) document.documentElement.style.setProperty(`--family-${fixed}`, family(fixed))
+  document.documentElement.classList.toggle('outline-font', outline())
   zoomTo(size)
 }
 $('prev-font').addEventListener('click', () => setFont(fontIndex - 1))

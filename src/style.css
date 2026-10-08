@@ -13,12 +13,12 @@ body {
 /* The glyphs are pixel squares, so macOS's text smoothing (which thickens glyphs and softens their edges) only blurs
    them: Chrome/Safari get none at all, Firefox (no "none") gets grayscale, which drops the thickening. Only at whole
    pixel ratios: under browser zoom the squares can't line up with the screen, and unsmoothed they turn jagged.
-   Safari always reports a whole ratio, so it always gets smoothing off */
+   Safari always reports a whole ratio, so it always gets smoothing off. Outline fonts keep the system's smoothing */
 /* biome-ignore lint/correctness/noUnknownMediaFeatureName: -webkit-device-pixel-ratio is how Safari answers */
 @media (resolution: 1dppx), (resolution: 2dppx), (resolution: 3dppx), (resolution: 4dppx),
   (-webkit-device-pixel-ratio: 1), (-webkit-device-pixel-ratio: 2), (-webkit-device-pixel-ratio: 3),
   (-webkit-device-pixel-ratio: 4) {
-  body {
+  :root:not(.outline-font) body {
     -webkit-font-smoothing: none;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -255,8 +255,9 @@ button {
   z-index: 2147483647;
 }
 
-.bitmap-text body,
-.bitmap-text input,
-.bitmap-text input::placeholder {
+/* Not for an outline font (main.ts's .outline-font), which the browser draws as usual */
+.bitmap-text:not(.outline-font) body,
+.bitmap-text:not(.outline-font) input,
+.bitmap-text:not(.outline-font) input::placeholder {
   -webkit-text-fill-color: transparent;
 }
