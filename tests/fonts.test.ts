@@ -1,5 +1,5 @@
 import { expect, it } from 'vitest'
-import { FONTS, OUTLINE } from '../src/fonts'
+import { FONTS } from '../src/fonts'
 import css from '../src/fonts.css?raw'
 
 // Every font file as a data: URL. The binaries are Git LFS files, so a checkout without LFS (or a deploy that skips
@@ -45,10 +45,10 @@ it('every url() in fonts.css is a shipped file', () => {
 
 it('every font has a regular and bold family for each zoom level, plus 12 and 18', () => {
   const missing: string[] = []
-  for (const font of Object.keys(FONTS))
-    for (const size of [...FONTS[font], 12, 18])
+  for (const font of FONTS)
+    for (const size of [...font.levels, 12, 18])
       for (const weight of ['400', '700']) {
-        const family = OUTLINE.includes(font) ? font : `${font} ${size}`
+        const family = font.outline ? font.name : `${font.name} ${size}`
         if (!faces.some((face) => face.family === family && face.weight === weight)) missing.push(`${family} ${weight}`)
       }
   expect(missing).toEqual([])

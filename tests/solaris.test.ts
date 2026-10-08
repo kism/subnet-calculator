@@ -1,4 +1,5 @@
 import { expect, it } from 'vitest'
+import type { Metrics } from '../src/bitmapText'
 
 // tests/solaris/ holds 1x QEMU screenshots of Solaris 2.6 CDE (solaris_xsmall.png, solaris_small.png) and snippets
 // cut from them. xsmall's text is Lucida Sans 12, small's is 14. Each snippet's text must match, pixel for pixel, the
@@ -11,10 +12,7 @@ const CASES = [
 ]
 
 const shots = import.meta.glob<string>('./solaris/*.png', { eager: true, query: '?inline', import: 'default' })
-const metrics = import.meta.glob<{ glyphs: Record<string, number[]> }>('../src/fonts/*.json', {
-  eager: true,
-  import: 'default',
-})
+const metrics = import.meta.glob<Metrics>('../src/fonts/*.json', { eager: true, import: 'default' })
 const atlases = import.meta.glob<string>('../src/fonts/*.png', { eager: true, query: '?inline', import: 'default' })
 
 type Pixels = [number, number][]
