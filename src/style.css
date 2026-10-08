@@ -1,5 +1,5 @@
 /* Colours and widget looks come from the classic-stylesheets CDE theme and the skin main.ts loads */
-/* Lucida from fonts.css, one family per zoom level; main.ts swaps size and family together.
+/* The chosen font from fonts.css, one family per zoom level; main.ts swaps size and family together.
    Mobile browsers mustn't resize text on their own, or the pixel font lands on a non-whole size */
 body {
   font:
@@ -137,13 +137,13 @@ main {
   color: var(--button-dark);
 }
 
-/* Settings window: fixed px font so A-/A+ don't scale it */
+/* Settings window: fixed px font so A-/A+ don't scale it. --family-12/18 are the chosen font's families (main.ts) */
 #controls {
   position: fixed;
   right: 18px;
   bottom: 8px;
   font:
-    12px "Lucida Sans 12",
+    12px var(--family-12, "Lucida Sans 12"),
     sans-serif;
   text-align: center;
 }
@@ -160,7 +160,8 @@ main {
 }
 
 /* Fits the longest skin name (northern-sky-8) so the < button doesn't jump around */
-#skin {
+#skin,
+#font {
   min-width: 10em;
 }
 
@@ -181,10 +182,10 @@ button {
     min-height: calc(100dvh - 1em);
   }
 
-  /* 18px: a native Lucida size, and at least 16px so iOS doesn't zoom in on input focus */
+  /* 18px: a native size in every font, and at least 16px so iOS doesn't zoom in on input focus */
   main {
     font:
-      18px "Lucida Sans 18",
+      18px var(--family-18, "Lucida Sans 18"),
       sans-serif;
     width: 100%;
     margin-bottom: 0.5em;
@@ -219,12 +220,12 @@ button {
     overflow-wrap: break-word;
   }
 
-  /* Skin picker at the bottom right, shrink-wrapped by the auto left margin */
+  /* Settings at the bottom right, shrink-wrapped by the auto left margin */
   #controls {
     position: static;
     margin: auto 0 0 auto;
     font:
-      18px "Lucida Sans 18",
+      18px var(--family-18, "Lucida Sans 18"),
       sans-serif;
   }
 
