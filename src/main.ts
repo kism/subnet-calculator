@@ -3,7 +3,7 @@ import 'classic-stylesheets/themes/cde/theme.css'
 import './fonts.css'
 import './style.css'
 import './bitmapText'
-import { FONTS, OUTLINE } from './fonts'
+import { FONTS } from './fonts'
 import { calculate, formatIp, maskToPrefix, parseIp, parsePrefix, prefixToMask } from './subnet'
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T
@@ -17,6 +17,9 @@ maskInput.value = '255.255.255.0'
 
 let maskActive = false
 
+// A result row; a label of 'Error' marks the input as invalid
+type Row = [label: string, value: string]
+
 function setActive(useMask: boolean): void {
   maskActive = useMask
   update()
@@ -29,7 +32,7 @@ function panel(className: string, text: string): HTMLDivElement {
   return div
 }
 
-function render(data: [string, string][]): void {
+function render(data: Row[]): void {
   info.textContent = ''
   info.append(
     ...data.map(([key, value]) => {
@@ -55,7 +58,8 @@ function syncMasks(prefix: number): void {
   if (maskToPrefix(maskInput.value) !== prefix) maskInput.value = formatIp(prefixToMask(prefix))
 }
 
-function rows(): [string, string][] {
+// Reads the inputs into result rows, also syncing the mask boxes to the prefix in use
+function readInputs(): Row[] {
   const value = ipInput.value.trim()
   const slash = value.indexOf('/')
   prefixSlider.disabled = maskInput.disabled = slash !== -1
@@ -73,22 +77,22 @@ function rows(): [string, string][] {
   if (ip === null) return [['Error', 'Invalid IP address']]
   if (prefix === null) return [['Error', 'Invalid netmask']]
 
-  const info = calculate(ip, prefix)
+  const subnet = calculate(ip, prefix)
   return [
-    ['Address', `${info.address}/${info.prefix}`],
-    ['Netmask', info.netmask],
-    ['Wildcard', info.wildcard],
-    ['Network', `${info.network}/${info.prefix}`],
-    ['Broadcast', info.broadcast],
-    ['HostMin', info.hostMin],
-    ['HostMax', info.hostMax],
-    ['Hosts', info.hosts.toLocaleString()],
+    ['Address', `${subnet.address}/${subnet.prefix}`],
+    ['Netmask', subnet.netmask],
+    ['Wildcard', subnet.wildcard],
+    ['Network', `${subnet.network}/${subnet.prefix}`],
+    ['Broadcast', subnet.broadcast],
+    ['HostMin', subnet.hostMin],
+    ['HostMax', subnet.hostMax],
+    ['Hosts', subnet.hosts.toLocaleString()],
   ]
 }
 
 let saveTimer = 0
 function update(): void {
-  const data = rows()
+  const data = readInputs()
   render(data)
   // Remember the last valid IP once it has stayed valid for a second. Valid input is only digits, dots, a slash
   // and spaces, so dropping the spaces makes it cookie-safe
@@ -155,42 +159,42 @@ function evenBodyWidth(): void {
 }
 addEventListener('resize', evenBodyWidth)
 
-const fontNames = Object.keys(FONTS)
 const fontButton = $<HTMLButtonElement>('font')
 let fontIndex = 0
+let font = FONTS[0]
 let zoomIndex = 0
-const levels = () => FONTS[fontNames[fontIndex]]
-const outline = () => OUTLINE.indexOf(fontNames[fontIndex]) !== -1
-const family = (size: number) => (outline() ? `"${fontNames[fontIndex]}"` : `"${fontNames[fontIndex]} ${size}"`)
+const family = (size: number) => (font.outline ? `"${font.name}"` : `"${font.name} ${size}"`)
 function zoom(index: number): void {
-  zoomIndex = Math.min(levels().length - 1, Math.max(0, index))
-  const size = levels()[zoomIndex]
+  zoomIndex = Math.min(font.levels.length - 1, Math.max(0, index))
+  const size = font.levels[zoomIndex]
   document.body.style.font = `${size}px ${family(size)}, sans-serif`
   setCookie('zoom', size)
   $<HTMLButtonElement>('smaller').disabled = zoomIndex === 0
-  $<HTMLButtonElement>('bigger').disabled = zoomIndex === levels().length - 1
+  $<HTMLButtonElement>('bigger').disabled = zoomIndex === font.levels.length - 1
   evenBodyWidth()
 }
 // A size the font has no level for (Lucida's 10 in Terminus, an old cookie's 22) snaps to the next level down
-const zoomTo = (size: number) => zoom(levels().filter((level) => level <= size).length - 1)
+const zoomTo = (size: number) => zoom(font.levels.filter((level) => level <= size).length - 1)
 $('smaller').addEventListener('click', () => zoom(zoomIndex - 1))
 $('bigger').addEventListener('click', () => zoom(zoomIndex + 1))
 $('reset').addEventListener('click', () => zoomTo(12))
 
-function setFont(index: number, size = levels()[zoomIndex]): void {
-  fontIndex = (index + fontNames.length) % fontNames.length
-  const name = fontNames[fontIndex]
-  fontButton.textContent = name
-  setCookie('font', encodeURIComponent(name))
+function setFont(index: number, size = font.levels[zoomIndex]): void {
+  fontIndex = (index + FONTS.length) % FONTS.length
+  font = FONTS[fontIndex]
+  fontButton.textContent = font.name
+  setCookie('font', encodeURIComponent(font.name))
   // style.css's fixed-size text (Settings, phones), and whether bitmapText.ts hides the real text
   for (const fixed of [12, 18]) document.documentElement.style.setProperty(`--family-${fixed}`, family(fixed))
-  document.documentElement.classList.toggle('outline-font', outline())
+  document.documentElement.classList.toggle('outline-font', !!font.outline)
   zoomTo(size)
 }
 $('prev-font').addEventListener('click', () => setFont(fontIndex - 1))
 $('next-font').addEventListener('click', () => setFont(fontIndex + 1))
 fontButton.addEventListener('click', () => setFont(0))
-setFont(Math.max(0, fontNames.indexOf(decodeURIComponent(getCookie('font') ?? ''))), Number(getCookie('zoom')) || 12)
+const savedFont = decodeURIComponent(getCookie('font') ?? '')
+const savedFontIndex = FONTS.findIndex((f) => f.name === savedFont)
+setFont(Math.max(0, savedFontIndex), Number(getCookie('zoom')) || 12)
 
 // Browser zoom gives a fractional pixel ratio, where the bitmap glyphs can't keep even pixels, so on desktop its
 // shortcuts drive the page's own levels instead. The View menu's zoom can't be intercepted; bitmapText copes with it
@@ -236,7 +240,7 @@ const skinFiles = import.meta.glob<string>('/node_modules/classic-stylesheets/th
   eager: true,
 })
 const skinNames = Object.keys(skinFiles).map((path) => path.slice(path.lastIndexOf('/') + 1, -'.css'.length))
-const skinCss = Object.keys(skinFiles).map((path) => skinFiles[path])
+const skinCss = Object.values(skinFiles)
 const defaultSkin = skinNames.indexOf('crimson-4')
 const skinStyle = document.head.appendChild(document.createElement('style'))
 const skinButton = $<HTMLButtonElement>('skin')

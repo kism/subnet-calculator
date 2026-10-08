@@ -2,11 +2,11 @@
 // so no browser smoothing or sub-pixel placement can soften it. The real text stays in the DOM in the matching WOFF
 // fonts, made invisible with -webkit-text-fill-color, so selection, copy, find, screen readers and the caret still
 // work; each character is drawn where the browser laid out that invisible character.
-interface Metrics {
+export interface Metrics {
   ascent: number
   descent: number
-  // [atlas x, width, height, left, ascent, advance] in font pixels
-  glyphs: Record<string, number[]>
+  // In font pixels, keyed by char code
+  glyphs: Record<string, [x: number, width: number, height: number, left: number, ascent: number, advance: number]>
 }
 
 interface Atlas {
@@ -61,8 +61,8 @@ function glyph(atlas: Atlas, tint: HTMLCanvasElement, char: string, x: number, t
   const g = atlas.metrics.glyphs[char.charCodeAt(0)]
   if (!g) return 0
   const [ax, w, h, left, ascent, advance] = g
-  const px = scale * devicePixelRatio
   const dpr = devicePixelRatio
+  const px = scale * dpr
   const baseline = Math.round(top * dpr + atlas.metrics.ascent * px)
   const gx = Math.round(x * dpr + left * px)
   const gy = Math.round(baseline - ascent * px)
@@ -119,8 +119,8 @@ function drawTextNodes(): void {
 
 // Input values aren't text nodes: lay them out from the content box, vertically centred like the browser does
 function drawInputs(): void {
-  for (const input of Array.prototype.slice.call(document.querySelectorAll('input:not([type=range])'))) {
-    const el = input as HTMLInputElement
+  const n = (s: string) => parseFloat(s) || 0
+  for (const el of document.querySelectorAll<HTMLInputElement>('input:not([type=range])')) {
     const placeholder = !el.value
     const text = el.value || el.placeholder
     const r = el.getBoundingClientRect()
@@ -131,7 +131,6 @@ function drawInputs(): void {
     if (!atlas) continue
     const scale = parseFloat(style.fontSize) / atlas.size
     const colour = placeholder ? getComputedStyle(el, '::placeholder').color : style.color
-    const n = (s: string) => parseFloat(s) || 0
     const left = r.left + n(style.borderLeftWidth) + n(style.paddingLeft)
     const top = r.top + n(style.borderTopWidth) + n(style.paddingTop)
     const width = r.right - n(style.borderRightWidth) - n(style.paddingRight) - left
