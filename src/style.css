@@ -1,5 +1,5 @@
 /* Colours and widget looks come from the classic-stylesheets CDE theme and the skin main.ts loads */
-/* Lucida or Terminus from fonts.css, one family per zoom level; main.ts swaps size and family together.
+/* The chosen font from fonts.css, one family per zoom level; main.ts swaps size and family together.
    Mobile browsers mustn't resize text on their own, or the pixel font lands on a non-whole size */
 body {
   font:
@@ -182,7 +182,7 @@ button {
     min-height: calc(100dvh - 1em);
   }
 
-  /* 18px: a native Lucida and Terminus size, and at least 16px so iOS doesn't zoom in on input focus */
+  /* 18px: a native size in every font, and at least 16px so iOS doesn't zoom in on input focus */
   main {
     font:
       18px var(--family-18, "Lucida Sans 18"),
@@ -220,7 +220,7 @@ button {
     overflow-wrap: break-word;
   }
 
-  /* Skin picker at the bottom right, shrink-wrapped by the auto left margin */
+  /* Settings at the bottom right, shrink-wrapped by the auto left margin */
   #controls {
     position: static;
     margin: auto 0 0 auto;
