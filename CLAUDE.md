@@ -24,6 +24,7 @@ Use the Node version in `.nvmrc` (26) and npm.
   - Masks with gaps are rejected.
 - Tests live in `tests/`. Keep the logic in `subnet.ts` so it stays testable.
   - `subnet.test.ts` holds the hand-written cases.
+  - `solaris.test.ts` draws strings from the shipped 12/14px glyph atlases and compares them pixel for pixel with the text in `tests/solaris/*_path.png` and `*_title.png`, snippets cut from the 1x Solaris 2.6 screenshots beside them. The test decodes the PNGs itself.
   - `reference.test.ts` checks `calculate()` against `tests/cases.json`. `npm test` runs `scripts/gen_cases.py` first (as `pretest`) to generate that file from Python's `ipaddress`. The file is gitignored.
 - `src/main.ts` holds the DOM wiring.
   - A `/suffix` on the IP (either `/24` or `/255.255.255.0`) wins. When there's a suffix, both mask boxes are disabled and show the parsed prefix.
