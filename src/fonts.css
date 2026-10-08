@@ -2,7 +2,8 @@
    zoom level (main.ts ZOOM_LEVELS), each the original 10/12/14/18px bitmaps or one of them doubled, regular and bold
    always from the same size. bitmapText.ts draws the glyphs from the matching PNG atlas; these WOFFs give the
    invisible real text the same advances, and are the visible fallback if the atlases don't load.
-   Terminus (ter-1*n/b from terminus-fonts-legacy-x11) follows them, one family per native size, no doubling */
+   Terminus (ter-1*n/b from terminus-fonts-legacy-x11) follows them, one family per native size, no doubling
+   Adobe Helvetica (X11 75dpi, helv{R,B}*-ISO8859-1) works like Lucida, from its 10/12/14/18/24px bitmaps */
 
 @font-face {
   font-family: "Lucida Sans 10";
@@ -274,4 +275,132 @@
   src:
     url("./fonts/Terminus-Bold32.woff2") format("woff2"),
     url("./fonts/Terminus-Bold32.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Helvetica 10";
+  font-weight: 400;
+  src:
+    url("./fonts/Helvetica10.woff2") format("woff2"),
+    url("./fonts/Helvetica10.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Helvetica 10";
+  font-weight: 700;
+  src:
+    url("./fonts/Helvetica-Bold10.woff2") format("woff2"),
+    url("./fonts/Helvetica-Bold10.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Helvetica 12";
+  font-weight: 400;
+  src:
+    url("./fonts/Helvetica12.woff2") format("woff2"),
+    url("./fonts/Helvetica12.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Helvetica 12";
+  font-weight: 700;
+  src:
+    url("./fonts/Helvetica-Bold12.woff2") format("woff2"),
+    url("./fonts/Helvetica-Bold12.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Helvetica 14";
+  font-weight: 400;
+  src:
+    url("./fonts/Helvetica14.woff2") format("woff2"),
+    url("./fonts/Helvetica14.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Helvetica 14";
+  font-weight: 700;
+  src:
+    url("./fonts/Helvetica-Bold14.woff2") format("woff2"),
+    url("./fonts/Helvetica-Bold14.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Helvetica 18";
+  font-weight: 400;
+  src:
+    url("./fonts/Helvetica18.woff2") format("woff2"),
+    url("./fonts/Helvetica18.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Helvetica 18";
+  font-weight: 700;
+  src:
+    url("./fonts/Helvetica-Bold18.woff2") format("woff2"),
+    url("./fonts/Helvetica-Bold18.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Helvetica 20";
+  font-weight: 400;
+  src:
+    url("./fonts/Helvetica10.woff2") format("woff2"),
+    url("./fonts/Helvetica10.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Helvetica 20";
+  font-weight: 700;
+  src:
+    url("./fonts/Helvetica-Bold10.woff2") format("woff2"),
+    url("./fonts/Helvetica-Bold10.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Helvetica 24";
+  font-weight: 400;
+  src:
+    url("./fonts/Helvetica24.woff2") format("woff2"),
+    url("./fonts/Helvetica24.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Helvetica 24";
+  font-weight: 700;
+  src:
+    url("./fonts/Helvetica-Bold24.woff2") format("woff2"),
+    url("./fonts/Helvetica-Bold24.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Helvetica 28";
+  font-weight: 400;
+  src:
+    url("./fonts/Helvetica14.woff2") format("woff2"),
+    url("./fonts/Helvetica14.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Helvetica 28";
+  font-weight: 700;
+  src:
+    url("./fonts/Helvetica-Bold14.woff2") format("woff2"),
+    url("./fonts/Helvetica-Bold14.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Helvetica 36";
+  font-weight: 400;
+  src:
+    url("./fonts/Helvetica18.woff2") format("woff2"),
+    url("./fonts/Helvetica18.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Helvetica 36";
+  font-weight: 700;
+  src:
+    url("./fonts/Helvetica-Bold18.woff2") format("woff2"),
+    url("./fonts/Helvetica-Bold18.woff") format("woff");
 }

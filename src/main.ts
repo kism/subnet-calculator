@@ -155,12 +155,14 @@ function evenBodyWidth(): void {
 addEventListener('resize', evenBodyWidth)
 
 // Each font's zoom levels, each with a "<font> <size>" family in fonts.css. Lucida's are an original 10/12/14/18px
-// bitmap or one doubled (8 was too small and 16, 8px doubled, too blocky); Terminus has every level natively.
+// bitmap or one doubled (8 was too small and 16, 8px doubled, too blocky), Helvetica's likewise from 10/12/14/18/24;
+// Terminus has every level natively.
 // bitmapText.ts snaps every glyph to whole pixels, so these all stay sharp. Every font needs 12 (the default and
 // Settings) and 18 (phones)
 const FONTS: Record<string, number[]> = {
   'Lucida Sans': [10, 12, 14, 18, 20, 24, 28, 36],
   Terminus: [12, 14, 16, 18, 20, 22, 24, 28, 32],
+  Helvetica: [10, 12, 14, 18, 20, 24, 28, 36],
 }
 const fontNames = Object.keys(FONTS)
 const fontButton = $<HTMLButtonElement>('font')
