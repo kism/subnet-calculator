@@ -259,7 +259,3 @@ button {
 .bitmap-text input::placeholder {
   -webkit-text-fill-color: transparent;
 }
-
-.bitmap-text #dev-font {
-  -webkit-text-fill-color: currentColor;
-}

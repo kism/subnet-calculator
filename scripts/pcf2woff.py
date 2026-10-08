@@ -116,7 +116,8 @@ def parse_pcf(data: bytes) -> dict:
             text = agl.toUnicode(string(o))
             if len(text) == 1:
                 cmap.setdefault(ord(text), index)
-        # ASCII keeps the X11 glyphs Solaris actually drew: ' and ` as curly quoteright/quoteleft, - as minus
+        # ASCII keeps the X11 glyphs Solaris actually drew: ' and ` as curly quoteright/quoteleft, - as minus (checked
+        # against Solaris screenshots in tests/solaris)
         cmap.update({code: index for code, index in encoding.items() if code < 0x80})
     return {"props": props, "ascent": font_ascent, "descent": font_descent, "glyphs": glyphs, "cmap": cmap}
 

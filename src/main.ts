@@ -130,7 +130,6 @@ document.addEventListener('focusin', trackWindow)
 keepActive()
 // addListener rather than addEventListener: MediaQueryList only got EventTarget in Safari 14
 phone.addListener(keepActive)
-phone.addListener(showFontReadout)
 // Focus the IP box and select any text the browser restored (refresh/back)
 ipInput.select()
 document.addEventListener('keydown', (e) => {
@@ -164,8 +163,9 @@ function zoom(index: number): void {
   const size = ZOOM_LEVELS[zoomIndex]
   document.body.style.font = `${size}px "Lucida Sans ${size}", sans-serif`
   setCookie('zoom', size)
+  $<HTMLButtonElement>('smaller').disabled = zoomIndex === 0
+  $<HTMLButtonElement>('bigger').disabled = zoomIndex === ZOOM_LEVELS.length - 1
   evenBodyWidth()
-  showFontReadout()
 }
 $('smaller').addEventListener('click', () => zoom(zoomIndex - 1))
 $('bigger').addEventListener('click', () => zoom(zoomIndex + 1))
@@ -240,18 +240,3 @@ $('next-skin').addEventListener('click', () => setSkin(skinIndex + 1))
 skinButton.addEventListener('click', () => setSkin(defaultSkin))
 const savedSkin = skinNames.indexOf(getCookie('skin') ?? '')
 setSkin(savedSkin === -1 ? defaultSkin : savedSkin)
-
-// Dev server only (import.meta.env.DEV is false in builds, so this is dropped): red readout of the calculator's
-// actual font, which on phones is main's fixed size rather than the zoom level
-function showFontReadout(): void {
-  if (!import.meta.env.DEV) return
-  let readout = document.getElementById('dev-font')
-  if (!readout) {
-    readout = document.body.appendChild(document.createElement('div'))
-    readout.id = 'dev-font'
-    readout.style.cssText =
-      'position:fixed;bottom:2px;left:4px;z-index:9;color:red;font:bold 12px monospace;pointer-events:none'
-  }
-  const style = getComputedStyle(mainEl)
-  readout.textContent = `${style.fontSize} ${style.fontFamily} @ ${devicePixelRatio}x`
-}
