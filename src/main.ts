@@ -154,25 +154,47 @@ function evenBodyWidth(): void {
 }
 addEventListener('resize', evenBodyWidth)
 
-// Each has a "Lucida Sans <size>" family in fonts.css: an original 10/12/14/18px bitmap or one doubled. bitmapText.ts
-// snaps every glyph to whole pixels, so these all stay sharp; 8 was too small and 16 (8px doubled) too blocky
-const ZOOM_LEVELS = [10, 12, 14, 18, 20, 24, 28, 36]
-let zoomIndex = ZOOM_LEVELS.indexOf(12)
+// Each font's zoom levels, each with a "<font> <size>" family in fonts.css. Lucida's are an original 10/12/14/18px
+// bitmap or one doubled (8 was too small and 16, 8px doubled, too blocky); Terminus has every level natively.
+// bitmapText.ts snaps every glyph to whole pixels, so these all stay sharp. Every font needs 12 (the default and
+// Settings) and 18 (phones)
+const FONTS: Record<string, number[]> = {
+  'Lucida Sans': [10, 12, 14, 18, 20, 24, 28, 36],
+  Terminus: [12, 14, 16, 18, 20, 22, 24, 28, 32],
+}
+const fontNames = Object.keys(FONTS)
+const fontButton = $<HTMLButtonElement>('font')
+let fontIndex = 0
+let zoomIndex = 0
+const levels = () => FONTS[fontNames[fontIndex]]
 function zoom(index: number): void {
-  zoomIndex = Math.min(ZOOM_LEVELS.length - 1, Math.max(0, index))
-  const size = ZOOM_LEVELS[zoomIndex]
-  document.body.style.font = `${size}px "Lucida Sans ${size}", sans-serif`
+  zoomIndex = Math.min(levels().length - 1, Math.max(0, index))
+  const size = levels()[zoomIndex]
+  document.body.style.font = `${size}px "${fontNames[fontIndex]} ${size}", sans-serif`
   setCookie('zoom', size)
   $<HTMLButtonElement>('smaller').disabled = zoomIndex === 0
-  $<HTMLButtonElement>('bigger').disabled = zoomIndex === ZOOM_LEVELS.length - 1
+  $<HTMLButtonElement>('bigger').disabled = zoomIndex === levels().length - 1
   evenBodyWidth()
 }
+// A size the font has no level for (Lucida's 10 in Terminus, an old cookie's 22) snaps to the next level down
+const zoomTo = (size: number) => zoom(levels().filter((level) => level <= size).length - 1)
 $('smaller').addEventListener('click', () => zoom(zoomIndex - 1))
 $('bigger').addEventListener('click', () => zoom(zoomIndex + 1))
-$('reset').addEventListener('click', () => zoom(ZOOM_LEVELS.indexOf(12)))
-// A saved size from before the levels changed (e.g. 22) snaps to the next level down
-const savedZoom = Number(getCookie('zoom')) || 12
-zoom(ZOOM_LEVELS.filter((size) => size <= savedZoom).length - 1)
+$('reset').addEventListener('click', () => zoomTo(12))
+
+function setFont(index: number, size = levels()[zoomIndex]): void {
+  fontIndex = (index + fontNames.length) % fontNames.length
+  const name = fontNames[fontIndex]
+  fontButton.textContent = name
+  setCookie('font', encodeURIComponent(name))
+  // style.css's fixed-size text (Settings, phones)
+  for (const fixed of [12, 18]) document.documentElement.style.setProperty(`--family-${fixed}`, `"${name} ${fixed}"`)
+  zoomTo(size)
+}
+$('prev-font').addEventListener('click', () => setFont(fontIndex - 1))
+$('next-font').addEventListener('click', () => setFont(fontIndex + 1))
+fontButton.addEventListener('click', () => setFont(0))
+setFont(Math.max(0, fontNames.indexOf(decodeURIComponent(getCookie('font') ?? ''))), Number(getCookie('zoom')) || 12)
 
 // Browser zoom gives a fractional pixel ratio, where the bitmap glyphs can't keep even pixels, so on desktop its
 // shortcuts drive the page's own levels instead. The View menu's zoom can't be intercepted; bitmapText copes with it
@@ -181,7 +203,8 @@ addEventListener('keydown', (e) => {
   const step = e.key === '=' || e.key === '+' ? 1 : e.key === '-' ? -1 : e.key === '0' ? 0 : null
   if (step === null) return
   e.preventDefault()
-  zoom(step ? zoomIndex + step : ZOOM_LEVELS.indexOf(12))
+  if (step) zoom(zoomIndex + step)
+  else zoomTo(12)
 })
 // Trackpad pinch arrives as ctrl+wheel in Chrome and Firefox: one level per 50px of pinch
 let pinch = 0

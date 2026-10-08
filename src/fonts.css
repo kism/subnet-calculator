@@ -1,7 +1,8 @@
 /* Solaris 2.6 Lucida Sans bitmaps (B&H), converted by scripts/pcf2woff.py with one square per pixel. One family per
    zoom level (main.ts ZOOM_LEVELS), each the original 10/12/14/18px bitmaps or one of them doubled, regular and bold
    always from the same size. bitmapText.ts draws the glyphs from the matching PNG atlas; these WOFFs give the
-   invisible real text the same advances, and are the visible fallback if the atlases don't load */
+   invisible real text the same advances, and are the visible fallback if the atlases don't load.
+   Terminus (ter-1*n/b from terminus-fonts-legacy-x11) follows them, one family per native size, no doubling */
 
 @font-face {
   font-family: "Lucida Sans 10";
@@ -129,4 +130,148 @@
   src:
     url("./fonts/LucidaSans-Bold18.woff2") format("woff2"),
     url("./fonts/LucidaSans-Bold18.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Terminus 12";
+  font-weight: 400;
+  src:
+    url("./fonts/Terminus12.woff2") format("woff2"),
+    url("./fonts/Terminus12.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Terminus 12";
+  font-weight: 700;
+  src:
+    url("./fonts/Terminus-Bold12.woff2") format("woff2"),
+    url("./fonts/Terminus-Bold12.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Terminus 14";
+  font-weight: 400;
+  src:
+    url("./fonts/Terminus14.woff2") format("woff2"),
+    url("./fonts/Terminus14.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Terminus 14";
+  font-weight: 700;
+  src:
+    url("./fonts/Terminus-Bold14.woff2") format("woff2"),
+    url("./fonts/Terminus-Bold14.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Terminus 16";
+  font-weight: 400;
+  src:
+    url("./fonts/Terminus16.woff2") format("woff2"),
+    url("./fonts/Terminus16.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Terminus 16";
+  font-weight: 700;
+  src:
+    url("./fonts/Terminus-Bold16.woff2") format("woff2"),
+    url("./fonts/Terminus-Bold16.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Terminus 18";
+  font-weight: 400;
+  src:
+    url("./fonts/Terminus18.woff2") format("woff2"),
+    url("./fonts/Terminus18.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Terminus 18";
+  font-weight: 700;
+  src:
+    url("./fonts/Terminus-Bold18.woff2") format("woff2"),
+    url("./fonts/Terminus-Bold18.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Terminus 20";
+  font-weight: 400;
+  src:
+    url("./fonts/Terminus20.woff2") format("woff2"),
+    url("./fonts/Terminus20.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Terminus 20";
+  font-weight: 700;
+  src:
+    url("./fonts/Terminus-Bold20.woff2") format("woff2"),
+    url("./fonts/Terminus-Bold20.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Terminus 22";
+  font-weight: 400;
+  src:
+    url("./fonts/Terminus22.woff2") format("woff2"),
+    url("./fonts/Terminus22.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Terminus 22";
+  font-weight: 700;
+  src:
+    url("./fonts/Terminus-Bold22.woff2") format("woff2"),
+    url("./fonts/Terminus-Bold22.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Terminus 24";
+  font-weight: 400;
+  src:
+    url("./fonts/Terminus24.woff2") format("woff2"),
+    url("./fonts/Terminus24.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Terminus 24";
+  font-weight: 700;
+  src:
+    url("./fonts/Terminus-Bold24.woff2") format("woff2"),
+    url("./fonts/Terminus-Bold24.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Terminus 28";
+  font-weight: 400;
+  src:
+    url("./fonts/Terminus28.woff2") format("woff2"),
+    url("./fonts/Terminus28.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Terminus 28";
+  font-weight: 700;
+  src:
+    url("./fonts/Terminus-Bold28.woff2") format("woff2"),
+    url("./fonts/Terminus-Bold28.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Terminus 32";
+  font-weight: 400;
+  src:
+    url("./fonts/Terminus32.woff2") format("woff2"),
+    url("./fonts/Terminus32.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Terminus 32";
+  font-weight: 700;
+  src:
+    url("./fonts/Terminus-Bold32.woff2") format("woff2"),
+    url("./fonts/Terminus-Bold32.woff") format("woff");
 }

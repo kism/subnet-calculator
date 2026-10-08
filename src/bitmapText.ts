@@ -16,28 +16,25 @@ interface Atlas {
   tinted: Record<string, HTMLCanvasElement>
 }
 
-// Every atlas in src/fonts, keyed by name (LucidaSans12, LucidaSans-Bold12...)
+// Every atlas in src/fonts, keyed by name (LucidaSans12, LucidaSans-Bold12, Terminus12...)
 const metricFiles = import.meta.glob<Metrics>('./fonts/*.json', { eager: true, import: 'default' })
 const imageFiles = import.meta.glob<string>('./fonts/*.png', { eager: true, query: '?url', import: 'default' })
 const baseName = (path: string) => path.slice(path.lastIndexOf('/') + 1, path.lastIndexOf('.'))
-const names = Object.keys(metricFiles).map(baseName)
-// Original bitmap sizes, largest first: a zoom level uses the first that divides it (20 is 10x2, 36 is 18x2...)
-const BASES = names
-  .map((name) => Number(name.replace(/\D/g, '')))
-  .filter((size, i, all) => all.indexOf(size) === i)
-  .sort((a, b) => b - a)
 
 const canvas = document.createElement('canvas')
 canvas.id = 'bitmap-text'
 const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
 const atlases: Record<string, Atlas> = {}
 
-// The atlas matching the invisible text's "Lucida Sans <zoom level>" family (fonts.css) and weight
+// The atlas matching the invisible text's "<font> <zoom level>" family (fonts.css) and weight: the largest original
+// bitmap size that divides the level (20 is 10x2, 36 is 18x2...)
 function atlasFor(style: CSSStyleDeclaration): Atlas {
-  const level = Number((/Lucida Sans (\d+)/.exec(style.fontFamily) || [])[1]) || 12
-  const base = BASES.filter((size) => level % size === 0)[0] || 12
+  const [, family = 'Lucida Sans', size = '12'] = /([A-Za-z ]+) (\d+)/.exec(style.fontFamily) || []
   const bold = Number(style.fontWeight) >= 600 || style.fontWeight === 'bold'
-  return atlases[`LucidaSans${bold ? '-Bold' : ''}${base}`]
+  const name = family.replace(/ /g, '') + (bold ? '-Bold' : '')
+  const level = Number(size)
+  for (let base = level; base > 0; base--) if (level % base === 0 && atlases[name + base]) return atlases[name + base]
+  return atlases.LucidaSans12
 }
 
 // The atlas in one colour (white glyphs recoloured with source-in), cached per colour
