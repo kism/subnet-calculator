@@ -22,7 +22,7 @@ Use the Node version in `.nvmrc` (26) and npm.
   - IPs are unsigned 32-bit numbers. Normalise with `>>> 0` after any bitwise operation.
   - `/31` and `/32` are treated as having no network or broadcast address reserved (RFC 3021).
   - Masks with gaps are rejected.
-  - IPv6 addresses are arrays of eight 16-bit hextets (no BigInt, which the oldest browsers lack). IPv6 has no broadcast, and every address is a host, as in ipcalc. Output follows RFC 5952, including dotted IPv4-mapped addresses (as Python 3.13+ does).
+  - IPv6 addresses are arrays of eight 16-bit hextets (no BigInt, which the oldest browsers lack). IPv6 has no broadcast, and every address is a host, as in ipcalc. Output follows RFC 5952, including dotted IPv4-mapped addresses (but not for wildcards). Python 3.13 changed how it prints those, so `gen_cases.py` formats them itself.
 - Tests live in `tests/`. Keep the logic in `subnet.ts` so it stays testable.
   - `subnet.test.ts` holds the hand-written cases.
   - `solaris.test.ts` draws strings from the shipped 12/14px glyph atlases and compares them pixel for pixel with the text in `tests/solaris/*_path.png` and `*_title.png`, snippets cut from the 1x Solaris 2.6 screenshots beside them. The test decodes the PNGs itself.
