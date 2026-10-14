@@ -29,6 +29,25 @@ for _ in range(20000):
         }
     )
 
+# IPv6, with runs of zero hextets so "::" compression gets exercised. No broadcast, and every address is a host
+for _ in range(20000):
+    ip = sum(random.choice([0, random.getrandbits(16)]) << (16 * i) for i in range(8))
+    prefix = random.randint(0, 128)
+    net = ipaddress.IPv6Network((ip, prefix), strict=False)
+    cases.append(
+        {
+            "ip": str(ipaddress.IPv6Address(ip)),
+            "prefix": prefix,
+            "address": str(ipaddress.IPv6Address(ip)),
+            "netmask": str(net.netmask),
+            "wildcard": str(net.hostmask),
+            "network": str(net.network_address),
+            "hostMin": str(net.network_address),
+            "hostMax": str(net.broadcast_address),
+            "hosts": net.num_addresses,
+        }
+    )
+
 out = Path(__file__).resolve().parent.parent.joinpath("tests", "cases.json")
 data = json.dumps(cases).encode()
 out.write_bytes(data)

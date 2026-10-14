@@ -1,5 +1,17 @@
 import { describe, expect, it } from 'vitest'
-import { calculate, formatIp, maskToPrefix, parseIp, parsePrefix, prefixToMask } from '../src/subnet'
+import {
+  calculate,
+  calculate6,
+  formatIp,
+  formatIp6,
+  maskToPrefix,
+  maskToPrefix6,
+  parseIp,
+  parseIp6,
+  parsePrefix,
+  prefixToMask,
+  prefixToMask6,
+} from '../src/subnet'
 
 describe('parseIp', () => {
   it('parses valid addresses', () => {
@@ -69,5 +81,49 @@ describe('calculate', () => {
   it('handles /0', () => {
     const p0 = calculate(parseIp('8.8.8.8') as number, 0)
     expect([p0.network, p0.broadcast, p0.hosts]).toEqual(['0.0.0.0', '255.255.255.255', 2 ** 32 - 2])
+  })
+})
+
+describe('IPv6', () => {
+  it('parses and formats', () => {
+    expect(parseIp6('2001:DB8::1')).toEqual([0x2001, 0xdb8, 0, 0, 0, 0, 0, 1])
+    expect(parseIp6('::ffff:1.2.3.4')).toEqual([0, 0, 0, 0, 0, 0xffff, 0x102, 0x304])
+    expect(formatIp6([0, 0, 0, 0, 0, 0, 0, 0])).toBe('::')
+    expect(formatIp6([0, 0, 0, 0, 0, 0xffff, 0x102, 0x304])).toBe('::ffff:1.2.3.4')
+    expect(formatIp6([1, 0, 0, 2, 0, 0, 0, 3])).toBe('1:0:0:2::3')
+    expect(formatIp6([1, 0, 2, 3, 4, 5, 6, 7])).toBe('1:0:2:3:4:5:6:7')
+    for (const bad of [
+      '',
+      '1::2::3',
+      '1:2:3:4:5:6:7',
+      '1:2:3:4:5:6:7:8:9',
+      ':1::',
+      '12345::',
+      'g::',
+      '::1.2.3',
+      '1.2.3.4',
+    ])
+      expect(parseIp6(bad)).toBeNull()
+  })
+
+  it('handles masks and suffixes', () => {
+    for (let p = 0; p <= 128; p++) expect(maskToPrefix6(formatIp6(prefixToMask6(p)))).toBe(p)
+    expect(maskToPrefix6('ffff::ffff')).toBeNull()
+    expect(parsePrefix('/64', true)).toBe(64)
+    expect(parsePrefix('ffff:ffff::', true)).toBe(32)
+    expect(parsePrefix('129', true)).toBeNull()
+  })
+
+  it('calculates a /64', () => {
+    expect(calculate6(parseIp6('2001:db8::1') as number[], 64)).toEqual({
+      address: '2001:db8::1',
+      netmask: 'ffff:ffff:ffff:ffff::',
+      wildcard: '::ffff:ffff:ffff:ffff',
+      network: '2001:db8::',
+      hostMin: '2001:db8::',
+      hostMax: '2001:db8::ffff:ffff:ffff:ffff',
+      hosts: 2 ** 64,
+      prefix: 64,
+    })
   })
 })
