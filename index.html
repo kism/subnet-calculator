@@ -15,10 +15,10 @@
       <div class="title-bar"><div class="title-bar-text">Subnet calculator</div></div>
       <div class="window-body">
         <div id="addr">
-          <label>IP <input id="ip" placeholder="192.168.1.10/24" autocomplete="off" spellcheck="false" /></label>
-          <label class="box">
-            Netmask <input id="mask" placeholder="255.255.255.0" size="15" spellcheck="false" />
-          </label>
+          <label for="ip">IP</label>
+          <input id="ip" placeholder="192.168.1.10/24" autocomplete="off" spellcheck="false" />
+          <label for="mask">Netmask</label>
+          <input id="mask" placeholder="255.255.255.0" spellcheck="false" />
         </div>
         <label class="box" id="prefix-box">
           Prefix <output id="prefix-out">/24</output>

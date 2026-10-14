@@ -83,7 +83,6 @@ function setFamily(isV6: boolean): void {
   document.querySelectorAll('#slider span').forEach((tick, i) => {
     tick.textContent = String((i * max) / 4)
   })
-  maskInput.size = v6 ? 39 : 15
 }
 
 // Hosts from 2^32 up as a power of two (only IPv6 gets there, where it's always a power of two)

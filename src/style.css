@@ -44,14 +44,11 @@ main {
   color: var(--title-bar-active-fg);
 }
 
-#ip {
-  width: 14em;
-}
-
+/* One line each for IP and netmask; the label column fits the widest label in any font, so the boxes line up */
 #addr {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr;
   padding: 0.25em;
-  flex-wrap: wrap;
   align-items: center;
   gap: 0.333em;
 }
@@ -133,7 +130,8 @@ main {
   font-weight: bold;
 }
 
-.box:has(:disabled) {
+.box:has(:disabled),
+label:has(+ :disabled) {
   color: var(--button-dark);
 }
 
@@ -189,19 +187,6 @@ button {
       sans-serif;
     width: 100%;
     margin-bottom: 0.5em;
-  }
-
-  #addr {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  #addr input {
-    width: 100%;
-  }
-
-  #addr .box {
-    padding: 0;
   }
 
   /* Bold "Broadcast" is 102px at the fixed 18px; plus padding and borders that's 122px, so 6.875em (123.75px) */

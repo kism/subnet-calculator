@@ -30,7 +30,7 @@ Use the Node version in `.nvmrc` (26) and npm.
   - `reference.test.ts` checks `calculate()` against `tests/cases.json`. `npm test` runs `scripts/gen_cases.py` first (as `pretest`) to generate that file from Python's `ipaddress`. The file is gitignored.
 - `src/main.ts` holds the DOM wiring.
   - A `/suffix` on the IP (either `/24` or `/255.255.255.0`) wins. When there's a suffix, both mask boxes are disabled and show the parsed prefix.
-  - A `:` in the IP box switches to IPv6: the slider goes to 0–128 (reset to /64, or /24 on switching back) and the mask box widens. Hosts from 2^32 up are shown as `2^n`.
+  - A `:` in the IP box switches to IPv6: the slider goes to 0–128 (reset to /64, or /24 on switching back) (both boxes span the window, so IPv6 fits). Hosts from 2^32 up are shown as `2^n`.
   - Without a suffix, whichever mask box was last used (`maskActive`) decides the prefix. `syncMasks()` copies a valid value into the other box.
   - Once the IP box has held a valid value for a second, `update()` saves it (whitespace stripped) to an `ip` cookie. On load that cookie pre-fills the box.
   - Results are `flex-row` divs of two `.lowered .padding` panels (classes from `classic-stylesheets`) inside the `.raised` `#info`. A row whose label is `Error` gets the red `.error` class. Values get `<wbr>`s before `/` and after `.` or `:` so they wrap between octets or hextets on narrow phones (and copy cleanly).
