@@ -4,7 +4,20 @@ import './fonts.css'
 import './style.css'
 import './bitmapText'
 import { FONTS } from './fonts'
-import { calculate, formatIp, maskToPrefix, parseIp, parsePrefix, prefixToMask } from './subnet'
+import {
+  calculate,
+  calculate6,
+  formatIp,
+  formatIp6,
+  maskToPrefix,
+  maskToPrefix6,
+  parseIp,
+  parseIp6,
+  parsePrefix,
+  prefixToMask,
+  prefixToMask6,
+  type Subnet6Info,
+} from './subnet'
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T
 const ipInput = $<HTMLInputElement>('ip')
@@ -16,6 +29,7 @@ const info = $<HTMLDivElement>('info')
 maskInput.value = '255.255.255.0'
 
 let maskActive = false
+let v6 = false
 
 // A result row; a label of 'Error' marks the input as invalid
 type Row = [label: string, value: string]
@@ -38,12 +52,12 @@ function render(data: Row[]): void {
     ...data.map(([key, value]) => {
       const row = panel(key === 'Error' ? 'flex-row error' : 'flex-row', '')
       const valuePanel = panel('lowered padding grow', '')
-      // On narrow phones, wrap before a slash or after a dot rather than mid-octet; unlike a zero-width space,
-      // <wbr> isn't copied
-      for (const part of value.split(/([./])/)) {
+      // On narrow phones, wrap before a slash or after a dot or colon rather than mid-octet; unlike a zero-width
+      // space, <wbr> isn't copied
+      for (const part of value.split(/([./:])/)) {
         if (part === '/') valuePanel.append(document.createElement('wbr'))
         valuePanel.append(part)
-        if (part === '.') valuePanel.append(document.createElement('wbr'))
+        if (part === '.' || part === ':') valuePanel.append(document.createElement('wbr'))
       }
       row.append(panel('lowered padding', key), valuePanel)
       return row
@@ -55,47 +69,70 @@ function render(data: Row[]): void {
 function syncMasks(prefix: number): void {
   prefixSlider.value = String(prefix)
   prefixOut.textContent = `/${prefix}`
-  if (maskToPrefix(maskInput.value) !== prefix) maskInput.value = formatIp(prefixToMask(prefix))
+  if ((v6 ? maskToPrefix6 : maskToPrefix)(maskInput.value) !== prefix)
+    maskInput.value = v6 ? formatIp6(prefixToMask6(prefix)) : formatIp(prefixToMask(prefix))
 }
+
+// Switch the slider and mask box between IPv4 and IPv6, starting from the usual prefix for the family
+function setFamily(isV6: boolean): void {
+  v6 = isV6
+  maskActive = false
+  const max = v6 ? 128 : 32
+  prefixSlider.max = String(max)
+  prefixSlider.value = v6 ? '64' : '24'
+  document.querySelectorAll('#slider span').forEach((tick, i) => {
+    tick.textContent = String((i * max) / 4)
+  })
+  maskInput.size = v6 ? 39 : 15
+}
+
+// Hosts from 2^32 up as a power of two (only IPv6 gets there, where it's always a power of two)
+const formatHosts = (hosts: number) => (hosts >= 2 ** 32 ? `2^${Math.log2(hosts)}` : hosts.toLocaleString())
 
 // Reads the inputs into result rows, also syncing the mask boxes to the prefix in use
 function readInputs(): Row[] {
   const value = ipInput.value.trim()
+  // An empty box keeps the family, so clearing it to type another address doesn't reset the prefix
+  if (value && (value.indexOf(':') !== -1) !== v6) setFamily(!v6)
   const slash = value.indexOf('/')
   prefixSlider.disabled = maskInput.disabled = slash !== -1
 
   const prefix =
     slash !== -1
-      ? parsePrefix(value.slice(slash + 1))
+      ? parsePrefix(value.slice(slash + 1), v6)
       : maskActive
-        ? maskToPrefix(maskInput.value)
+        ? (v6 ? maskToPrefix6 : maskToPrefix)(maskInput.value)
         : Number(prefixSlider.value)
   if (prefix !== null) syncMasks(prefix)
 
   if (value === '') return [['Error', 'Enter IP address']]
-  const ip = parseIp(slash === -1 ? value : value.slice(0, slash))
+  const address = slash === -1 ? value : value.slice(0, slash)
+  const ip = v6 ? parseIp6(address) : parseIp(address)
   if (ip === null) return [['Error', 'Invalid IP address']]
   if (prefix === null) return [['Error', 'Invalid netmask']]
 
-  const subnet = calculate(ip, prefix)
-  return [
+  // IPv6 has no broadcast row
+  const subnet: Subnet6Info & { broadcast?: string } =
+    typeof ip === 'number' ? calculate(ip, prefix) : calculate6(ip, prefix)
+  const rows: Row[] = [
     ['Address', `${subnet.address}/${subnet.prefix}`],
     ['Netmask', subnet.netmask],
     ['Wildcard', subnet.wildcard],
     ['Network', `${subnet.network}/${subnet.prefix}`],
-    ['Broadcast', subnet.broadcast],
+    ['Broadcast', subnet.broadcast ?? ''],
     ['HostMin', subnet.hostMin],
     ['HostMax', subnet.hostMax],
-    ['Hosts', subnet.hosts.toLocaleString()],
+    ['Hosts', formatHosts(subnet.hosts)],
   ]
+  return rows.filter(([, value]) => value)
 }
 
 let saveTimer = 0
 function update(): void {
   const data = readInputs()
   render(data)
-  // Remember the last valid IP once it has stayed valid for a second. Valid input is only digits, dots, a slash
-  // and spaces, so dropping the spaces makes it cookie-safe
+  // Remember the last valid IP once it has stayed valid for a second. Valid input is only hex digits, dots,
+  // colons, a slash and spaces, so dropping the spaces makes it cookie-safe
   clearTimeout(saveTimer)
   if (data[0][0] !== 'Error')
     saveTimer = window.setTimeout(() => setCookie('ip', ipInput.value.replace(/\s/g, '')), 1000)
