@@ -90,10 +90,12 @@ export function parseIp6(s: string): Ip6 | null {
   return parts.map((p) => parseInt(p, 16))
 }
 
-/** RFC 5952: IPv4-mapped in dotted form, otherwise lowercase, no leading zeros, and the longest (then first) run of two or more zero hextets as "::". */
-export function formatIp6(ip: Ip6): string {
-  // IPv4-mapped addresses keep the IPv4 dotted (RFC 5952 section 5)
-  if (ip.slice(0, 6).join() === '0,0,0,0,0,65535') return `::ffff:${formatIp(ip[6] * 0x10000 + ip[7])}`
+/**
+ * RFC 5952: lowercase, no leading zeros, and the longest (then first) run of two or more zero hextets as "::". An
+ * IPv4-mapped address keeps the IPv4 dotted (section 5), unless it's really a mask (a /80 wildcard).
+ */
+export function formatIp6(ip: Ip6, dotted = true): string {
+  if (dotted && ip.slice(0, 6).join() === '0,0,0,0,0,65535') return `::ffff:${formatIp(ip[6] * 0x10000 + ip[7])}`
   let start = -1
   let length = 1
   for (let i = 0; i < 8; i++) {
@@ -128,7 +130,10 @@ export function calculate6(ip: Ip6, prefix: number): Subnet6Info {
   return {
     address: formatIp6(ip),
     netmask: formatIp6(mask),
-    wildcard: formatIp6(mask.map((h) => h ^ 0xffff)),
+    wildcard: formatIp6(
+      mask.map((h) => h ^ 0xffff),
+      false,
+    ),
     network: formatIp6(ip.map((h, i) => h & mask[i])),
     hostMin: formatIp6(ip.map((h, i) => h & mask[i])),
     hostMax: formatIp6(ip.map((h, i) => h | (mask[i] ^ 0xffff))),

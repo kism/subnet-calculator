@@ -109,6 +109,7 @@ describe('IPv6', () => {
   it('handles masks and suffixes', () => {
     for (let p = 0; p <= 128; p++) expect(maskToPrefix6(formatIp6(prefixToMask6(p)))).toBe(p)
     expect(maskToPrefix6('ffff::ffff')).toBeNull()
+    expect(maskToPrefix6('junk')).toBeNull()
     expect(parsePrefix('/64', true)).toBe(64)
     expect(parsePrefix('ffff:ffff::', true)).toBe(32)
     expect(parsePrefix('129', true)).toBeNull()
