@@ -50,7 +50,7 @@ main {
   grid-template-columns: auto 1fr;
   padding: 0.25em;
   align-items: center;
-  gap: 0.333em;
+  gap: 0.333em 0.667em;
 }
 
 #prefix-box {
