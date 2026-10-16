@@ -1,9 +1,10 @@
 {
+  "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "subnet-calculator",
   "compatibility_date": "2026-10-06",
-  "assets": {
-    "directory": "./dist"
-  },
+  // No "main" or "assets": the Cloudflare Vite plugin builds an assets-only Worker into dist/ and points
+  // `wrangler deploy` at it
+  //
   // Deploys replace every custom domain on the Worker with this list, so the Preview domain must live here too or a
   // deploy removes it. enabled = serves production, previews_enabled = serves Previews at *.<pattern>
   "routes": [

@@ -2,8 +2,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-tsc
-tsc -p tests
+pnpm typecheck
 
 # Strip any credentials CI may have put in the remote URL
 repo=$(git remote get-url origin 2>/dev/null | sed 's|//[^@/]*@|//|' || true)

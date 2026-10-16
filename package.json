@@ -2,25 +2,27 @@
   "name": "subnet-calculator",
   "private": true,
   "type": "module",
+  "packageManager": "pnpm@12.11.2",
   "scripts": {
     "dev": "vite",
     "build": "./scripts/build.sh",
+    "preview": "vite preview",
+    "typecheck": "tsc && tsc -p tests",
     "pretest": "python3 scripts/gen_cases.py",
     "test": "vitest run",
-    "coverage": "npm test -- --coverage --coverage.reporter=text --coverage.reporter=lcovonly",
+    "coverage": "pnpm test --coverage --coverage.reporter=text --coverage.reporter=lcovonly",
     "lint": "biome check",
     "format": "biome check --write"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.15",
-    "@vitest/coverage-v8": "^5.0.3",
+    "@cloudflare/vite-plugin": "^1.64.0",
+    "@types/node": "^26.6.5",
+    "@vitest/coverage-v8": "^5.0.4",
     "typescript": "^7.0.2",
-    "vite": "^8.3.3",
-    "vitest": "^5.0.3"
-  },
-  "allowScripts": {
-    "esbuild@0.28.1": true,
-    "fsevents@2.3.3": true
+    "vite": "^8.3.4",
+    "vitest": "^5.0.4",
+    "wrangler": "^4.151.0"
   },
   "dependencies": {
     "classic-stylesheets": "^2.1.3"
