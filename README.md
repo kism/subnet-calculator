@@ -1,24 +1,43 @@
 # Subnet Calculator
 
 [![Lint](https://github.com/kism/subnet-calculator/actions/workflows/lint.yml/badge.svg)](https://github.com/kism/subnet-calculator/actions/workflows/lint.yml)
+[![Type Check](https://github.com/kism/subnet-calculator/actions/workflows/check_types.yml/badge.svg)](https://github.com/kism/subnet-calculator/actions/workflows/check_types.yml)
 [![Test](https://github.com/kism/subnet-calculator/actions/workflows/test.yml/badge.svg)](https://github.com/kism/subnet-calculator/actions/workflows/test.yml)
+[![Build](https://github.com/kism/subnet-calculator/actions/workflows/build.yml/badge.svg)](https://github.com/kism/subnet-calculator/actions/workflows/build.yml)
 [![codecov](https://codecov.io/gh/kism/subnet-calculator/graph/badge.svg)](https://codecov.io/gh/kism/subnet-calculator)
 [![site](https://img.shields.io/website?url=https%3A%2F%2Fnetwork.autist.network)](https://network.autist.network/)
 
-IPv4 subnet calculator. Paste an address with or without a `/prefix` or `/netmask`.
+IPv4 and IPv6 subnet calculator. Paste an address with or without a `/prefix` or `/netmask`.
 
 There are so many online tools for this, but I made this to get a calculator that works the way I want.
 
-## Development
+## Prerequisites
 
-```sh
+- Node, the version in `.nvmrc`. With [nvm](https://github.com/nvm-sh/nvm): `nvm use`
+- [pnpm](https://pnpm.io/installation): `npm i -g pnpm`. The version is pinned in `packageManager` in `package.json`
+- Python 3, which generates the reference test cases
+- [Git LFS](https://git-lfs.com/), for the fonts and test screenshots
+
+## Run
+
+```bash
 nvm use
-npm ci
-npm run dev
-npm test
+pnpm install
+pnpm dev
 ```
 
-Deployment is done by linking the repo in Cloudflare workers.
+See [README_dev.md](README_dev.md) for testing, building, previewing and deploying.
+
+## Workflows
+
+The `.github` folder has one workflow per check, so a failing badge tells you what broke:
+
+| Workflow | Runs |
+| --- | --- |
+| `lint.yml` | Biome |
+| `check_types.yml` | `tsc` |
+| `test.yml` | Vitest with coverage, uploaded to Codecov |
+| `build.yml` | `pnpm build` |
 
 ## Fonts
 

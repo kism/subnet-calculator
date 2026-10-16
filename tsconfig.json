@@ -5,7 +5,7 @@
     "moduleResolution": "bundler",
     // The APIs the oldest supported browsers (Chrome 61, Firefox 60, Safari 11) have; Vite only rewrites syntax
     "lib": ["ES2017", "DOM"],
-    "types": ["vite/client"],
+    "types": ["vite/client", "node"],
     "strict": true,
     "verbatimModuleSyntax": true,
     "noEmit": true,

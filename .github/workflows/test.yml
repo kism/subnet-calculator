@@ -6,35 +6,48 @@ on:
     branches:
       - main
       - test
+    paths-ignore: &paths-ignore
+      - "**/README*"
+      - ".github/workflows/lint.yml"
+      - ".github/workflows/check_types.yml"
+      - ".github/workflows/build.yml"
   pull_request:
+    paths-ignore: *paths-ignore
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
-    name: Test
+    name: Vitest
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     permissions:
       contents: read
       id-token: write # Codecov OIDC upload, no token secret needed
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
         with:
           lfs: true # Required for the tests
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6 # Version comes from packageManager in package.json
+
       - name: Setup Node
         uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
-          cache: npm
+          cache: pnpm
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Test
-        run: npm run coverage
+        run: pnpm coverage
 
       - name: Upload coverage
         uses: codecov/codecov-action@v7
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+          use_oidc: true

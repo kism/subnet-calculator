@@ -2,19 +2,20 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-A static single-page IPv4 subnet calculator with no UI framework, just plain HTML, CSS and TypeScript. Vite bundles it into `dist/`, which is deployed as a Cloudflare Workers static-assets site (`wrangler.jsonc`, served at `network.autist.network`). Deployment happens by linking the repo in Cloudflare Workers. The structure mirrors the sibling `../idiom-generator` project.
+A static single-page IPv4 subnet calculator with no UI framework, just plain HTML, CSS and TypeScript. Vite (with the Cloudflare Vite plugin) bundles it into `dist/` as an assets-only Worker (`wrangler.jsonc`, served at `network.autist.network`). Deployment happens by linking the repo in Cloudflare Workers (see `README_dev.md`). The structure follows the sibling `../cloudflare-page-template` project.
 
 ## Commands
 
-Use the Node version in `.nvmrc` (26) and npm.
+Use the Node version in `.nvmrc` (26) and pnpm (version pinned in `packageManager`).
 
-- `npm run dev`: Vite dev server.
-- `npm test`: runs vitest once. `npm run coverage` does the same with coverage, writing `coverage/lcov.info`.
-  - Single file: `npx vitest run tests/subnet.test.ts`.
-  - Single test by name: `npx vitest run -t "handles /31"`.
-- `npm run build`: runs `scripts/build.sh`, which type-checks with tsc (`noEmit`; `src/` against `lib: ES2017` to match the oldest browsers, `tests/` via `tests/tsconfig.json` against ES2022) and then runs `vite build` into `dist/`.
-- `npm run lint`: `biome check`, which covers both linting and formatting. `npm run format` applies the fixes.
-- CI is two workflows: `lint.yml` (lint, then build) and `test.yml` (tests with coverage, uploaded to Codecov via OIDC).
+- `pnpm dev`: Vite dev server. `pnpm preview` serves `dist/` in workerd.
+- `pnpm test`: runs vitest once. `pnpm coverage` does the same with coverage, writing `coverage/lcov.info`.
+  - Single file: `pnpm vitest run tests/subnet.test.ts`.
+  - Single test by name: `pnpm vitest run -t "handles /31"`.
+- `pnpm typecheck`: tsc (`noEmit`; `src/` against `lib: ES2017` to match the oldest browsers, `tests/` via `tests/tsconfig.json` against ES2022).
+- `pnpm build`: runs `scripts/build.sh`, which runs `pnpm typecheck` and then `vite build` into `dist/`.
+- `pnpm lint`: `biome check`, which covers both linting and formatting. `pnpm format` applies the fixes.
+- CI is one workflow per check: `lint.yml`, `check_types.yml`, `test.yml` (tests with coverage, uploaded to Codecov via OIDC) and `build.yml`. `scripts/run-ci-local.sh` runs them all locally.
 
 ## Layout
 
@@ -27,7 +28,7 @@ Use the Node version in `.nvmrc` (26) and npm.
   - `subnet.test.ts` holds the hand-written cases.
   - `solaris.test.ts` draws strings from the shipped 12/14px glyph atlases and compares them pixel for pixel with the text in `tests/solaris/*_path.png` and `*_title.png`, snippets cut from the 1x Solaris 2.6 screenshots beside them. The test decodes the PNGs itself.
   - `fonts.test.ts` checks that every font file (`src/fonts/`, `public/fonts/`) is real, not a Git LFS pointer, by its magic number, that every `url()` in `fonts.css` exists, that every font in `FONTS` has regular and bold families for all its levels plus 12 and 18, and that every atlas JSON has its PNG. `vite.config.ts` lets Vitest load `fonts.css` (it blanks CSS imports otherwise).
-  - `reference.test.ts` checks `calculate()` against `tests/cases.json`. `npm test` runs `scripts/gen_cases.py` first (as `pretest`) to generate that file from Python's `ipaddress`. The file is gitignored.
+  - `reference.test.ts` checks `calculate()` against `tests/cases.json`. `pnpm test` runs `scripts/gen_cases.py` first (as `pretest`) to generate that file from Python's `ipaddress`. The file is gitignored.
 - `src/main.ts` holds the DOM wiring.
   - A `/suffix` on the IP (either `/24` or `/255.255.255.0`) wins. When there's a suffix, both mask boxes are disabled and show the parsed prefix.
   - A `:` in the IP box switches to IPv6: the slider goes to 0–128 (reset to /64, or /24 on switching back) (both boxes span the window, so IPv6 fits). Hosts from 2^32 up are shown as `2^n`.
@@ -56,6 +57,6 @@ Use the Node version in `.nvmrc` (26) and npm.
   - The proportional font makes `ch` a bad width unit, so label widths are in `em` measured against bold "Broadcast".
 - `scripts/build.sh` passes the git remote URL (with credentials stripped) and the HEAD sha to Vite as `VITE_SOURCE`.
   - Vite fills that into the `<!-- %VITE_SOURCE% -->` comment in `index.html`.
-  - `.env.development` gives `npm run dev` a placeholder, so Vite doesn't warn that the variable is undefined.
+  - `.env.development` gives `pnpm dev` a placeholder, so Vite doesn't warn that the variable is undefined.
   - The script tolerates there being no git repo or remote.
   - Keep the credential stripping if you change the script.
