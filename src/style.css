@@ -135,6 +135,11 @@ label:has(+ :disabled) {
   color: var(--button-dark);
 }
 
+/* The CDE theme embosses disabled text fields, but CDE itself doesn't appear to (unconfirmed, see TODO.md) */
+#mask:disabled {
+  text-shadow: none;
+}
+
 /* Settings window: fixed px font so A-/A+ don't scale it. --family-12/18 are the chosen font's families (main.ts) */
 #controls {
   position: fixed;
