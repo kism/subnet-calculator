@@ -7,7 +7,6 @@ A static single-page IPv4 subnet calculator with no UI framework, just plain HTM
 ## Commands
 
 Use the Node version in `.nvmrc` (26) and pnpm (version pinned in `packageManager`).
-
 - `pnpm dev`: Vite dev server. `pnpm preview` serves `dist/` in workerd.
 - `pnpm test`: runs vitest once. `pnpm coverage` does the same with coverage, writing `coverage/lcov.info`.
   - Single file: `pnpm vitest run tests/subnet.test.ts`.

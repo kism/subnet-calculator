@@ -41,7 +41,6 @@ can be tested here. The Cloudflare plugin is off under Vitest (see `vite.config.
 ## Deploying
 
 Link the repo in the Cloudflare dashboard (Workers & Pages → Create → Import a repository) with:
-
 - Build command: `pnpm run build`
 - Deploy command: `pnpm wrangler deploy`
 - Non-production branch deploy command: `pnpm wrangler versions upload`
