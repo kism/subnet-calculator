@@ -15,14 +15,14 @@
     "format": "biome check --write"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.6.2",
-    "@cloudflare/vite-plugin": "^1.64.0",
+    "@biomejs/biome": "^2.6.3",
+    "@cloudflare/vite-plugin": "^1.65.0",
     "@types/node": "^24.19.2",
     "@vitest/coverage-v8": "^5.0.5",
     "typescript": "^7.0.2",
     "vite": "^8.3.5",
     "vitest": "^5.0.5",
-    "wrangler": "^4.151.3"
+    "wrangler": "^4.153.0"
   },
   "dependencies": {
     "classic-stylesheets": "^2.1.3"
