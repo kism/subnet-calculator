@@ -130,14 +130,29 @@ main {
   font-weight: bold;
 }
 
+/* Insensitive text: Motif draws it in the normal colour through a 50% checkerboard, which bitmapText.ts does for
+   --stipple when Settings' Stipple toggle (.stipple, main.ts) is on. The browser can't, so outline fonts (and text
+   before the atlases load) stay greyed out instead */
 .box:has(:disabled),
 label:has(+ :disabled) {
   color: var(--button-dark);
 }
 
-/* The CDE theme embosses disabled text fields, but CDE itself doesn't appear to (unconfirmed, see TODO.md) */
-#mask:disabled {
-  text-shadow: none;
+html.stipple.bitmap-text:not(.outline-font) :disabled,
+html.stipple.bitmap-text:not(.outline-font) .box:has(:disabled),
+html.stipple.bitmap-text:not(.outline-font) label:has(+ :disabled) {
+  --stipple: 1;
+  color: var(--button-fg);
+}
+
+html.stipple.bitmap-text:not(.outline-font) input:disabled {
+  color: var(--input-fg);
+}
+
+/* The CDE theme embosses disabled text, but Solaris CDE doesn't. !important beats the skin's selectors, injected later */
+* {
+  /* biome-ignore lint/complexity/noImportantStyles: the skin's selectors are more specific and load later */
+  text-shadow: none !important;
 }
 
 /* Settings window: fixed px font so A-/A+ don't scale it. --family-12/18 are the chosen font's families (main.ts) */

@@ -195,6 +195,17 @@ function evenBodyWidth(): void {
 }
 addEventListener('resize', evenBodyWidth)
 
+// Insensitive text drawn through a checkerboard like Motif (style.css, bitmapText.ts), or greyed out like the theme
+const stippleButton = $<HTMLButtonElement>('stipple')
+function setStipple(on: boolean): void {
+  document.documentElement.classList.toggle('stipple', on)
+  stippleButton.textContent = `Stipple: ${on ? 'on' : 'off'}`
+  stippleButton.setAttribute('aria-pressed', String(on))
+  setCookie('stipple', on ? 1 : 0)
+}
+stippleButton.addEventListener('click', () => setStipple(!document.documentElement.classList.contains('stipple')))
+setStipple(getCookie('stipple') !== '0')
+
 const fontButton = $<HTMLButtonElement>('font')
 let fontIndex = 0
 let font = FONTS[0]
@@ -223,6 +234,8 @@ function setFont(index: number, size = font.levels[zoomIndex]): void {
   // style.css's fixed-size text (Settings, phones), and whether bitmapText.ts hides the real text
   for (const fixed of [12, 18]) document.documentElement.style.setProperty(`--family-${fixed}`, family(fixed))
   document.documentElement.classList.toggle('outline-font', !!font.outline)
+  // Only the bitmap fonts can stipple
+  stippleButton.disabled = !!font.outline
   zoomTo(size)
 }
 $('prev-font').addEventListener('click', () => setFont(fontIndex - 1))

@@ -4,11 +4,15 @@ import type { Metrics } from '../src/bitmapText'
 // tests/solaris/ holds 1x QEMU screenshots of Solaris 2.6 CDE (solaris_xsmall.png, solaris_small.png) and snippets
 // cut from them. xsmall's text is Lucida Sans 12, small's is 14. Each snippet's text must match, pixel for pixel, the
 // same string drawn from the glyph atlases the page draws with (src/fonts/*.png and .json, see src/bitmapText.ts).
-const CASES = [
+// solaris_small_disabled is the insensitive "Layout" from a File Manager menu bar (cropped above its mnemonic
+// underline), which only keeps the pixels of one colour of a checkerboard, as bitmapText.ts does for --stipple.
+// Which colour depends on where the text lands on screen, so either passes
+const CASES: [shot: string, font: string, text: string, stipple?: boolean][] = [
   ['solaris_xsmall_path', 'LucidaSans12', '/opt/dir/crimson-4'],
   ['solaris_xsmall_title', 'LucidaSans12', 'File Manager - crimson-4'],
   ['solaris_small_path', 'LucidaSans14', '/opt/dir/crimson-4'],
   ['solaris_small_title', 'LucidaSans14', 'File Manager - crimson-4'],
+  ['solaris_small_disabled', 'LucidaSans14', 'Layout', true],
 ]
 
 const shots = import.meta.glob<string>('./solaris/*.png', { eager: true, query: '?inline', import: 'default' })
@@ -91,8 +95,11 @@ async function render(font: string, text: string): Promise<Pixels> {
   return pixels
 }
 
-for (const [shot, font, text] of CASES) {
+for (const [shot, font, text, stipple] of CASES) {
   it(`draws "${text}" like Solaris (${shot}.png)`, async () => {
-    expect(art(await render(font, text))).toBe(art(await screenshot(shots[`./solaris/${shot}.png`])))
+    const drawn = await render(font, text)
+    const expected = art(await screenshot(shots[`./solaris/${shot}.png`]))
+    if (!stipple) expect(art(drawn)).toBe(expected)
+    else expect([0, 1].map((k) => art(drawn.filter(([x, y]) => Math.abs(x + y) % 2 === k)))).toContain(expected)
   })
 }

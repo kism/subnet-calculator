@@ -54,10 +54,37 @@ function tinted(atlas: Atlas, colour: string): HTMLCanvasElement {
   return tint
 }
 
+// Insensitive glyphs are drawn here first, then cut down to a checkerboard of font pixels
+const scratch = document.createElement('canvas')
+const sctx = scratch.getContext('2d') as CanvasRenderingContext2D
+const checkers: Record<number, CanvasPattern> = {}
+
+// Two opaque cells on the diagonal of a 2x2 grid of font pixels, cell device pixels each
+function checker(cell: number): CanvasPattern {
+  if (!checkers[cell]) {
+    const c = document.createElement('canvas')
+    c.width = c.height = cell * 2
+    const t = c.getContext('2d') as CanvasRenderingContext2D
+    t.fillRect(cell, 0, cell, cell)
+    t.fillRect(0, cell, cell, cell)
+    checkers[cell] = sctx.createPattern(c, 'repeat') as CanvasPattern
+  }
+  return checkers[cell]
+}
+
 // One glyph with its pen position and the top of its line box in CSS pixels. Its origin is snapped to a whole device
 // pixel and it's scaled without smoothing, so it's always hard-edged; at 1x/2x every font pixel is a whole block,
-// while fractional screen scaling (1.25x...) makes some pixels a device pixel wider rather than letting it blur
-function glyph(atlas: Atlas, tint: HTMLCanvasElement, char: string, x: number, top: number, scale: number): number {
+// while fractional screen scaling (1.25x...) makes some pixels a device pixel wider rather than letting it blur.
+// stipple keeps only the font pixels where x + y is odd on the screen's font-pixel grid, like Motif's insensitive text
+function glyph(
+  atlas: Atlas,
+  tint: HTMLCanvasElement,
+  char: string,
+  x: number,
+  top: number,
+  scale: number,
+  stipple: boolean,
+): number {
   const g = atlas.metrics.glyphs[char.charCodeAt(0)]
   if (!g) return 0
   const [ax, w, h, left, ascent, advance] = g
@@ -66,9 +93,31 @@ function glyph(atlas: Atlas, tint: HTMLCanvasElement, char: string, x: number, t
   const baseline = Math.round(top * dpr + atlas.metrics.ascent * px)
   const gx = Math.round(x * dpr + left * px)
   const gy = Math.round(baseline - ascent * px)
-  if (w && h) ctx.drawImage(tint, ax, 0, w, h, gx, gy, Math.round(w * px), Math.round(h * px))
+  const dw = Math.round(w * px)
+  const dh = Math.round(h * px)
+  if (!w || !h) return advance * scale
+  if (!stipple) {
+    ctx.drawImage(tint, ax, 0, w, h, gx, gy, dw, dh)
+    return advance * scale
+  }
+  // ponytail: cells are round(px) wide, so at fractional scaling (1.25x...) they drift off the glyph's pixels
+  const cell = Math.max(1, Math.round(px))
+  scratch.width = dw
+  scratch.height = dh
+  sctx.imageSmoothingEnabled = false
+  sctx.drawImage(tint, ax, 0, w, h, 0, 0, dw, dh)
+  sctx.globalCompositeOperation = 'destination-in'
+  // The pattern starts at the glyph's corner, shifted a cell when that corner is on an odd square, so the parity
+  // is the screen's and neighbouring glyphs line up
+  const shift = (Math.round(gx / cell) + Math.round(gy / cell)) % 2 ? cell : 0
+  sctx.translate(shift, 0)
+  sctx.fillStyle = checker(cell)
+  sctx.fillRect(-shift, 0, dw, dh)
+  ctx.drawImage(scratch, gx, gy)
   return advance * scale
 }
+
+const stippled = (style: CSSStyleDeclaration) => style.getPropertyValue('--stipple').trim() === '1'
 
 // The real text is see-through, so ::selection's colour never reaches the glyphs: selected characters are tinted
 // here instead, with the same --title-bar-active-fg style.css gives ::selection
@@ -104,6 +153,7 @@ function drawTextNodes(): void {
     if (!atlas) continue
     const scale = parseFloat(style.fontSize) / atlas.size
     const tint = tinted(atlas, style.color)
+    const stipple = stippled(style)
     const selectedTint = selected.length ? tinted(atlas, selectionColour(parent)) : tint
     for (let i = 0; i < text.length; i++) {
       if (text[i] === ' ' || text[i] === '\n') continue
@@ -112,7 +162,7 @@ function drawTextNodes(): void {
       const rect = range.getClientRects()[0]
       // A character is selected when both its edges are inside a selection range
       const isSelected = selected.some((s) => s.comparePoint(node, i) === 0 && s.comparePoint(node, i + 1) === 0)
-      if (rect) glyph(atlas, isSelected ? selectedTint : tint, text[i], rect.left, rect.top, scale)
+      if (rect) glyph(atlas, isSelected ? selectedTint : tint, text[i], rect.left, rect.top, scale, stipple)
     }
   }
 }
@@ -143,13 +193,14 @@ function drawInputs(): void {
     let x = left - el.scrollLeft
     const lineTop = top + (height - (atlas.metrics.ascent + atlas.metrics.descent) * scale) / 2
     const tint = tinted(atlas, colour)
+    const stipple = stippled(style)
     // Text selected inside the focused input (selectionStart/End, in UTF-16 units like the loop index)
     const focused = !placeholder && document.activeElement === el
     const start = focused ? (el.selectionStart ?? 0) : 0
     const end = focused ? (el.selectionEnd ?? 0) : 0
     const selectedTint = start < end ? tinted(atlas, selectionColour(el)) : tint
     for (let i = 0; i < text.length; i++)
-      x += glyph(atlas, i >= start && i < end ? selectedTint : tint, text[i], x, lineTop, scale)
+      x += glyph(atlas, i >= start && i < end ? selectedTint : tint, text[i], x, lineTop, scale, stipple)
     ctx.restore()
   }
 }
