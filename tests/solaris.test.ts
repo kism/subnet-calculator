@@ -12,6 +12,8 @@ const CASES: [shot: string, font: string, text: string, stipple?: boolean][] = [
   ['solaris_xsmall_title', 'LucidaSans12', 'File Manager - crimson-4'],
   ['solaris_small_path', 'LucidaSans14', '/opt/dir/crimson-4'],
   ['solaris_small_title', 'LucidaSans14', 'File Manager - crimson-4'],
+  ['solaris_small_chars', 'LucidaSans14', '/tmp/0123456789.abcdefghijklmnopqrstuvwxyz'],
+  ['solaris_small_caps', 'LucidaSans14', '/tmp/ABCDEFGHIJKLMNOPQRSTUVWXYZ'],
   ['solaris_small_disabled', 'LucidaSans14', 'Layout', true],
 ]
 
